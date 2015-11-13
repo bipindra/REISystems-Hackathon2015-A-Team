@@ -5,7 +5,8 @@ var gulp = require("gulp"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
     uglify = require("gulp-uglify"),
-    project = require("./project.json");
+    project = require("./project.json"),
+    jasmine = require("gulp-jasmine");
 
 
 var paths = {
@@ -63,3 +64,9 @@ gulp.task("min:css", function () {
 });
 
 gulp.task("min", ["min:js", "min:css"]);
+
+gulp.task("test", function () {
+    return gulp.src('spec/test.js')
+        // gulp-jasmine works on filepaths so you can't have any plugins before it 
+        .pipe(jasmine());
+});
