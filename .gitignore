@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/WebApp/node_modules/gulp
+/src/WebApp/node_modules
+/src/WebApp/bin/Debug

@@ -1,0 +1,10 @@
+{
+  "AppSettings": {
+    "SiteTitle": "SmartData"
+  },
+  "Data": {
+    "DefaultConnection": {
+      "ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-SmartData-ccedfdb6-d247-43df-a67d-5d5af0f74683;Trusted_Connection=True;MultipleActiveResultSets=true"
+    }
+  }
+}
