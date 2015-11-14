@@ -34,34 +34,41 @@ app.factory('queryService', function () {
                 if (where !== "") {
                     queryResult = queryResult + "&" + where;
                 }
+            }
 
-                //Resolve OrderBy
-                var orderByStr = "";
-                if (queryObj.orderBy && queryObj.orderBy.columns && queryObj.orderBy.columns.length > 0) {
-                    orderByStr = queryObj.orderBy.columns.join(",");
+            //Resolve OrderBy
+            var orderByStr = "";
+            if (queryObj.orderBy && queryObj.orderBy.columns && queryObj.orderBy.columns.length > 0) {
+                orderByStr = queryObj.orderBy.columns.join(",");
 
-                    if (queryObj.orderBy.suffix && queryObj.orderBy.suffix !== "") {
-                        orderByStr = orderByStr + " " + queryObj.orderBy.suffix;
-                    } else {
-                        orderByStr = orderByStr + " " + "ASC";
-                    }
+                if (queryObj.orderBy.suffix && queryObj.orderBy.suffix !== "") {
+                    orderByStr = orderByStr + " " + queryObj.orderBy.suffix;
+                } else {
+                    orderByStr = orderByStr + " " + "ASC";
                 }
+            }
 
-                if (orderByStr !== "") {
-                    orderByStr = "$order=" + orderByStr;
-                    queryResult = queryResult + "&" + orderByStr;
-                }
+            if (orderByStr !== "") {
+                orderByStr = "$order=" + orderByStr;
+                queryResult = queryResult + "&" + orderByStr;
+            }
 
-                //Resolve GroupBy
-                var groupByStr = "";
-                if (queryObj.groupBy && queryObj.groupBy.length > 0) {
-                    groupByStr = queryObj.groupBy.join(",");
-                }
+            //Resolve GroupBy
+            var groupByStr = "";
+            if (queryObj.groupBy && queryObj.groupBy.length > 0) {
+                groupByStr = queryObj.groupBy.join(",");
+            }
 
-                if (groupByStr !== "") {
-                    groupByStr = "$group=" + groupByStr;
-                    queryResult = queryResult + "&" + groupByStr;
-                }
+            if (groupByStr !== "") {
+                groupByStr = "$group=" + groupByStr;
+                queryResult = queryResult + "&" + groupByStr;
+            }
+
+            //Resolve limit
+            var limitStr = "";
+            if (queryObj.limit && queryObj.limit !== "") {
+                limitStr = "$limit=" + queryObj.limit;
+                queryResult = queryResult + "&" + limitStr;
             }
         }
         return queryResult;
