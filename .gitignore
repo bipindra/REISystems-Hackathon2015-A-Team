@@ -5,3 +5,5 @@
 /src/WebApp/node_modules/gulp
 /src/WebApp/node_modules
 /src/WebApp/bin/Debug
+/.idea
+/src/WebApp/bin/output
