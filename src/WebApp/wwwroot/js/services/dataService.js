@@ -12,6 +12,18 @@ app.factory('dataService', ['$http', '$q', function ($http, $q) {
         return deferred.promise;
     }
 
+    function getDataP(url) {
+
+        var deferred = $q.defer();
+        var config = {};
+        $http.jsonp(url, config).then(function (response) {
+            deferred.resolve(response.data);
+        }, function (response) {
+            deferred.reject(response.data);
+        });
+        return deferred.promise;
+    }
+
     function convertToChartData(inputData) {
         return {
             data: inputData
@@ -19,6 +31,7 @@ app.factory('dataService', ['$http', '$q', function ($http, $q) {
     }
     return {
         getData: getData,
+        getDataP:getDataP,
         convertToChartData: convertToChartData
     };
 }]);
