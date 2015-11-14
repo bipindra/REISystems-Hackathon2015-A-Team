@@ -119,6 +119,7 @@ app.controller('headerController', function headerController($scope, lookupServi
         alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
     }
 
+
     $scope.PopulateLenderTable = function (type) {
         debugger;
         $scope.All = type == 0 ? true : false;
