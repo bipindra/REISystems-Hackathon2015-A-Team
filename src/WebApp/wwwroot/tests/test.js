@@ -17,7 +17,6 @@
 
         it('returns compact data', function () {
             var service = $injector.get('dataService');
-            
             expect(service.convertToChartData('hi')).toEqual({ data: 'hi' });
         });
 

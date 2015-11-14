@@ -23,7 +23,7 @@ module.exports = function(config) {
       'wwwroot/js/app.js',
       'wwwroot/js/services/*.js',
       'wwwroot/js/controllers/*.js',
-      'wwwroot/tests/*.js'
+      'wwwroot/tests/**/*test.js'
     ],
 
 
