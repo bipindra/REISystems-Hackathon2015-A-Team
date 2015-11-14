@@ -148,5 +148,16 @@ app.controller('headerController', function headerController($scope, lookupServi
         alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
     }
 
+    $scope.PopulateLenderTable = function (type) {
+        debugger;
+        $scope.All = type == 0 ? true : false;
+        $scope.FHA = type == 1 ? true : false;;
+        $scope.VA = type == 2 ? true : false;;
+        $scope.LendersData = [
+            { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
+            { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
+            { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
+        ];
+    }
 
 });
