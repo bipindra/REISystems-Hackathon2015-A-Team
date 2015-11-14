@@ -70,6 +70,13 @@ app.factory('queryService', function () {
                 limitStr = "$limit=" + queryObj.limit;
                 queryResult = queryResult + "&" + limitStr;
             }
+
+            //Resolve OffSet
+            var offsetStr = "";
+            if (queryObj.offset && queryObj.offset !== "") {
+                offsetStr = "$offset=" + queryObj.offset;
+                queryResult = queryResult + "&" + offsetStr;
+            }
         }
         return queryResult;
     };
