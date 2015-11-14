@@ -1,4 +1,5 @@
-﻿app.controller('headerController', function headerController($scope, lookupService) {
+﻿'use strict'
+app.controller('headerController', function headerController($scope, lookupService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
