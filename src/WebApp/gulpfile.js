@@ -66,7 +66,7 @@ gulp.task("min:css", function () {
 gulp.task("min", ["min:js", "min:css"]);
 
 gulp.task("test", function () {
-    return gulp.src('spec/test.js')
+    return gulp.src('wwwroot/tests/test.js')
         // gulp-jasmine works on filepaths so you can't have any plugins before it 
         .pipe(jasmine());
 });

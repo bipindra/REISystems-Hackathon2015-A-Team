@@ -1,25 +1,34 @@
 // Karma configuration
-// Generated on Fri Nov 13 2015 16:33:03 GMT-0500 (Eastern Standard Time)
+// Generated on Fri Nov 13 2015 18:47:13 GMT-0500 (Eastern Standard Time)
 
 module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: 'wwwroot',
+    basePath: '',
 
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['karma-jasmine'],
+    frameworks: ['jasmine'],
 
 
     // list of files / patterns to load in the browser
     files: [
+      'wwwroot/lib/angular/angular.js',
+      'wwwroot/lib/angular-ui-router/release/angular-ui-router.js',
+      'wwwroot/lib/angular-mocks/angular-mocks.js',
+      'wwwroot/lib/d3/d3.js',
+      'wwwroot/lib/angular-charts/dist/angular-charts.js',
+      'wwwroot/js/app.js',
+      'wwwroot/js/services/*.js',
+      'wwwroot/js/controllers/*.js',
+      'wwwroot/tests/*.js'
     ],
 
 
     // list of files to exclude
-    exclude: [
+    exclude: ['js/*.js'
     ],
 
 
@@ -54,11 +63,15 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+    // Concurrency level
+    // how many browser should be started simultanous
+    concurrency: Infinity
   })
 }

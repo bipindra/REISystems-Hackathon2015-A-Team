@@ -9,6 +9,8 @@
   ],
   "directory": "public/bower_components",
   "dependencies": {
+    "angular": "1.4.7",
+    "angular-mocks": "1.4.7",
     "bootstrap": "3.0.0",
     "bootstrap-touch-carousel": "0.8.0",
     "hammer.js": "2.0.4",
@@ -24,7 +26,7 @@
     "angular-translate-loader-static-files": "2.8.1",
     "d3": "3.3.11",
     "underscore": "1.8.3"
-    
+
   },
   "resolutions": {
     "angular-translate": "~2.8.1"

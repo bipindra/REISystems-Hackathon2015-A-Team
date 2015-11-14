@@ -1,6 +1,6 @@
 ﻿// Write your Javascript code.
 var app = angular.module('myApp', ['ui.router', 'angularCharts'])
-.config(function ($stateProvider, $urlRouterProvider) {
+.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/home');
 
@@ -10,10 +10,10 @@ var app = angular.module('myApp', ['ui.router', 'angularCharts'])
             url: '/home',
             templateUrl: 'templates/home/index.htm',
             controller: 'homeController'
-            
+
         });
 
-})
+}]);
 
 
 window.onerror = function (a, b, c) {
