@@ -1,0 +1,104 @@
+﻿<br />
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="container">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="col-md-4">
+                        <label>Loan Purpose</label>
+                        <div class="dropdown">
+                            <button id="btnLoanPurpose" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                {{SelectedLoanPurposeValue}}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pre-scrollable">
+                                <li ng-repeat="loanPurpose in lookupLoanPurpose"><a ng-click="LoanPurposeSelected(loanPurpose.Code,loanPurpose.Value)">{{loanPurpose.Value}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>State</label>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width:auto;">
+                                {{SelectedStateValue}}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pre-scrollable">
+                                <li ng-repeat="State in lookupState"><a ng-click="StateSelected(State.Code,State.Value)">{{State.Value}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>County</label>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width:auto;">
+                                {{SelectedCountyValue}}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu pre-scrollable">
+                                <li ng-repeat="County in lookupCounty"><a ng-click="CountySelected(County.Code,County.Value)">{{County.Value}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div class="row">
+                        <br /><br />
+                        <div class="col-md-2 col-md-offset-4">
+                            <span><button type="button" class="btn btn-info btn-block" ng-click="SearchClicked()">Search</button></span>
+                        </div>
+                    </div>
+                    <!--<div class="pull-right">
+                        <label>State</label>
+                        <input type="text" class="form-control" placeholder="Enter State" />
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <!--<div data-ac-chart="'bar'" data-ac-data="data" data-ac-config="config" class="chart ng-isolate-scope"></div>-->
+    </div>
+</div>
+
+
+<div class="row-fluid">
+    <div class="span3">
+        <div class="col-md-4">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(0)">35 Total Mortgage Lenders</button>
+        </div>
+
+        <div class="col-md-4">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(1)">20 Lenders Provide FHA Loan in past</button>
+        </div>
+
+        <div class="col-md-4">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">5 Lenders Provide FHA Loan in past</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th ng-show="All || FHA ">FHA</th>
+                <th ng-show="All || VA">VA</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="Lender in LendersData">
+                <td>{{Lender.Name}}</td>
+                <td ng-show="All || FHA ">{{Lender.FHA}}</td>
+                <td ng-show="All || VA ">{{Lender.VA}}</td>
+                <td>{{Lender.Address}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+

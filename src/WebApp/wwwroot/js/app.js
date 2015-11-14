@@ -11,7 +11,16 @@ var app = angular.module('myApp', ['ui.router', 'angularCharts'])
             templateUrl: 'templates/home/index.htm',
             controller: 'homeController'
 
+        })
+
+        .state('header', {
+            url: '/header',
+            templateUrl: 'templates/home/header.htm',
+            controller: 'headerController'
+
         });
+
+
 
 }]);
 
