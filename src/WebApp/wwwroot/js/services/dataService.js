@@ -1,4 +1,5 @@
-﻿app.factory('dataService', ['$http', '$q', function ($http, $q) {
+﻿'use strict'
+app.factory('dataService', ['$http', '$q', function ($http, $q) {
 
     function getData(url) {
         var deferred = $q.defer();
