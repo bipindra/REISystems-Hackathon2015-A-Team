@@ -77,7 +77,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
         $scope.SelectedCountyValue = CountyValue;
     }
 
-    $scope.SearchClicked = function () {
+    
+    function SearchClickHandler() {
         $scope.showButtons = true;
         $scope.showTable = false;
         var input={
@@ -133,8 +134,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 $scope.TotalFSA = (a.length == 1 && !a[0].respondent_id) ? 0 : a.length;
                 $scope.data = newData;
                 window.data = newData;
-                CreateChart(newData.results);
                 $rootScope.loading = false;
+                //PopulateLenderTable(0);
                 
             });
         }, function (data) {
@@ -143,54 +144,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
         return;
      }
-    
-    function CreateChart(data) {
-        console.log(data);
 
-        //data = alasql('SELECT * from ? ', [data]);
-
-        var ys = [];
-        for (var x = 0; x < data.length; x++) {
-            var item = data[x];
-            if (!ys[item.respondent_id]) {
-                ys[item.respondent_id] = [];
-            }
-            ys[item.respondent_id]["loan_type_" + item.loan_type] = item.count;
-
-        }
-        var final = [];
-        for (var x in ys) {
-            final.push({
-                respondent_id: x,
-                loan_type_1: ys[x]["loan_type_1"],
-                loan_type_2: ys[x]["loan_type_2"],
-                loan_type_3: ys[x]["loan_type_3"]
-            });
-        }
-        var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["loan_type_1", "loan_type_2"] });
-        console.log(chartData);
-
-        $scope.config = {
-            title: 'Products',
-            tooltips: true,
-            labels: false,
-            mouseover: function () { },
-            mouseout: function () { },
-            click: function () { },
-            legend: {
-                display: true,
-                //could be 'left, right'
-                position: 'right'
-            }
-        };
-        chartData.series = ["Conventional"," FHA "]
-        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
-        $scope.chartData = chartData;
-    }
-
-
-
-    $scope.PopulateLenderTable = function (type) {
+    function PopulateLenderTableClick(type) {
         
 
         //$scope.showTable = true;
@@ -211,48 +166,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
         
 
         //for chart
-        where = '';
-        if (type != 0) {
-            where = 'WHERE loan_type=' + type;
-        }
-        var allData = alasql('select * from ? '+where, [ $scope.allData]);
-        var ys = [];
-        for (var x = 0; x < allData.length; x++) {
-            var item = allData[x];
-            if (!ys[item.respondent_id]) {
-                ys[item.respondent_id] = [];
-            }
-            ys[item.respondent_id]["action_taken_" + item.action_taken] = item.count;
 
-        }
-        var final = [];
-        for (var x in ys) {
-            final.push({
-                respondent_id: x,
-                action_taken_1: ys[x]["action_taken_1"],
-                action_taken_2: ys[x]["action_taken_2"]
-            });
-        }
-
-        var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1", "action_taken_2"] });
-        console.log(chartData);
-
-        $scope.config = {
-            title: 'Approvals/Disapprovals',
-            tooltips: true,
-            labels: false,
-            mouseover: function () { },
-            mouseout: function () { },
-            click: function () { },
-            legend: {
-                display: true,
-                //could be 'left, right'
-                position: 'right'
-            }
-        };
-        chartData.series = ["Approved ", " Rejected "]
-        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
-        $scope.chartData = chartData;
+        $scope.chartData = ShowChart($scope.allData, type);;
         
         //end chart 
         var list = [];
@@ -296,5 +211,54 @@ app.controller('headerController', function headerController($rootScope, $scope,
         //    { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
         //];
     }
+
+    function ShowChart(allData, type) {
+        $scope.showChart = true;
+        var where = '';
+        if (type != 0) {
+            where = 'WHERE loan_type=' + type;
+        }
+        var allData = alasql('select * from ? ' + where, [$scope.allData]);
+        var ys = [];
+        for (var x = 0; x < allData.length; x++) {
+            var item = allData[x];
+            if (!ys[item.respondent_id]) {
+                ys[item.respondent_id] = [];
+            }
+            ys[item.respondent_id]["action_taken_" + item.action_taken] = item.count;
+
+        }
+        var final = [];
+        for (var x in ys) {
+            final.push({
+                respondent_id: x,
+                action_taken_1: ys[x]["action_taken_1"],
+                action_taken_2: ys[x]["action_taken_2"]
+            });
+        }
+
+        var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1", "action_taken_2"] });
+        console.log(chartData);
+
+        $scope.config = {
+            title: 'Approvals/Disapprovals',
+            tooltips: true,
+            labels: false,
+            mouseover: function () { },
+            mouseout: function () { },
+            click: function () { },
+            legend: {
+                display: true,
+                //could be 'left, right'
+                position: 'right'
+            }
+        };
+        chartData.series = ["Approved ", " Rejected "]
+        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
+        return chartData;
+    }
+
+    $scope.PopulateLenderTable = PopulateLenderTableClick;
+    $scope.SearchClicked = SearchClickHandler;
 
 });

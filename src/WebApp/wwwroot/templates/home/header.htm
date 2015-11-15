@@ -42,19 +42,15 @@
                             </ul>
                         </div>
                     </div>
-                    <br />
-                    <br />
-                    <br />
+                    <div class="row">
+                        &nbsp;
+                    </div>
                     <div class="row">
                         <br /><br />
                         <div class="col-md-2 col-md-offset-4">
                             <span><button type="button" class="btn btn-info btn-block" ng-click="SearchClicked()">Search</button></span>
                         </div>
                     </div>
-                    <!--<div class="pull-right">
-                        <label>State</label>
-                        <input type="text" class="form-control" placeholder="Enter State" />
-                    </div>-->
                 </div>
             </div>
         </div>
@@ -64,22 +60,22 @@
 
 
 <div class="row-fluid" ng-show="showButtons">
-    <div class="span3">
-        <div class="col-md-3" >
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(0)">{{TotalLender}} Total Lenders</button>
-        </div>
+    
+    <div class="col col-md-3 col-sm-6 col-xs-6">
+        <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(0)">{{TotalLender}} Total Lenders</button>
+        <br/>
+    </div>
 
-        <div class="col-md-3" >
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(1)">{{TotalFHA}} Total FHA</button>
-        </div>
+    <div class="col col-md-3 col-sm-6 col-xs-6">
+        <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(1)">{{TotalFHA}} Total FHA</button><br />
+    </div>
 
-        <div class="col-md-3">
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">{{TotalVA}} TotalVA</button>
-        </div>
+    <div class="col col-md-3 col-sm-6 col-xs-6">
+        <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">{{TotalVA}} TotalVA</button><br />
+    </div>
 
-        <div class="col-md-3" ng-show="TotalFSA>0">
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(4)">{{TotalFSA}}Total FSA</button>
-        </div>
+    <div class="col col-md-3 col-sm-6 col-xs-6" ng-show="TotalFSA>0">
+        <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(4)">{{TotalFSA}}Total FSA</button><br />
     </div>
 </div>
 
@@ -105,6 +101,6 @@
 </div>
 
 
-<div class="row">
+<div class="row" ng-show="showChart">
     <div data-ac-chart="'bar'" data-ac-data="chartData" data-ac-config="config" class="chart"></div>
 </div>
