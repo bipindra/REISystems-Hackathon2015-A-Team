@@ -23,12 +23,12 @@ app.factory('queryService', function () {
             if (queryObj.where && queryObj.where.length > 0) {
                 for (var i = 0; i < queryObj.where.length; i++) {
                     if (queryObj.where[i].key && queryObj.where[i].value && queryObj.where[i].operator && queryObj.where[i].key !== "" && queryObj.where[i].value !== "" && queryObj.where[i].operator !== "") {
-                        tempWhereArray.push(queryObj.where[i].key + escape(queryObj.where[i].operator) + queryObj.where[i].value);
+                        tempWhereArray.push(queryObj.where[i].key + queryObj.where[i].operator + queryObj.where[i].value);
                     }
                 }
 
                 if (tempWhereArray.length > 0) {
-                    where = "$where=" + tempWhereArray.join("+AND+");
+                    where = "$where=" + tempWhereArray.join(" AND ");
                 }
 
                 if (where !== "") {
@@ -42,14 +42,14 @@ app.factory('queryService', function () {
                 orderByStr = queryObj.orderBy.columns.join(",");
 
                 if (queryObj.orderBy.suffix && queryObj.orderBy.suffix !== "") {
-                    orderByStr = orderByStr + "+" + queryObj.orderBy.suffix;
+                    orderByStr = orderByStr + " " + queryObj.orderBy.suffix;
                 } else {
-                    orderByStr = orderByStr + "+" + "ASC";
+                    orderByStr = orderByStr + " " + "ASC";
                 }
             }
 
             if (orderByStr !== "") {
-                orderByStr = "$orderBy=" + orderByStr;
+                orderByStr = "$order=" + orderByStr;
                 queryResult = queryResult + "&" + orderByStr;
             }
 

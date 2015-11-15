@@ -1,5 +1,5 @@
 ﻿'use strict'
-app.controller('headerController', function headerController($scope, lookupService, queryService) {
+app.controller('headerController', function headerController($scope, lookupService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
@@ -116,37 +116,9 @@ app.controller('headerController', function headerController($scope, lookupServi
     }
 
     $scope.SearchClicked = function () {
-        var query = queryService.getQueryString({
-            "select": [('COUNT()'), 'action_taken', 'respondent_id'],
-            "where": [{
-                "key": "state_code",
-                "value": $scope.SelectedStateCode,
-                "operator": "="
-            }, {
-                "key": "county_code",
-                "value": $scope.SelectedCountyCode.toString().substr(2,3),
-                "operator": "="
-            }, {
-                "key": "loan_purpose",
-                "value": $scope.SelectedLoanPurposeCode,
-                "operator": "="
-            }, {
-                "key": "state_code",
-                "value": "1",
-                "operator": "="
-            }, {
-                "key": "property_type",
-                "value": "1",
-                "operator": "="
-            }],
-            "orderBy": {
-                "columns": ['respondent_id', 'count'],
-                "suffix": "DESC"
-            },
-            "groupBy": ['action_taken', 'respondent_id']
-        });
         alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
     }
+
 
     $scope.PopulateLenderTable = function (type) {
         debugger;
