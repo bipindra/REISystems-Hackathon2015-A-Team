@@ -1,5 +1,5 @@
 ﻿'use strict'
-app.controller('headerController', function headerController($rootScope,$scope, lookupService, queryService, dataService, configService) {
+app.controller('headerController', function headerController($rootScope, $scope, lookupService, queryService, dataService, configService, uiDataGeneratorService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
@@ -121,19 +121,19 @@ app.controller('headerController', function headerController($rootScope,$scope, 
             var url = t(input);
             
             dataService.getData(url).then(function (newData) {
-                //console.log(newData);
+                $scope.allData = newData.results;
                 var x = alasql('SELECT respondent_id  from ? GROUP by respondent_id', [newData.results]);
                 var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
                 var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
                 var a = alasql('SELECT respondent_id  from ? where loan_type = 4  GROUP by respondent_id', [newData.results]);
-                console.log("this is x");
-                console.log(x);
+
                 $scope.TotalLender = (x.length == 1 && !x[0].respondent_id) ? 0 : x.length;
                 $scope.TotalFHA = (y.length == 1 && !y[0].respondent_id) ? 0 : y.length;
                 $scope.TotalVA = (z.length == 1 && !z[0].respondent_id) ? 0 : z.length;
                 $scope.TotalFSA = (a.length == 1 && !a[0].respondent_id) ? 0 : a.length;
                 $scope.data = newData;
                 window.data = newData;
+                CreateChart(newData.results);
                 $rootScope.loading = false;
                 
             });
@@ -143,6 +143,52 @@ app.controller('headerController', function headerController($rootScope,$scope, 
 
         return;
      }
+    
+    function CreateChart(data) {
+        console.log(data);
+
+        //data = alasql('SELECT * from ? ', [data]);
+
+        var ys = [];
+        for (var x = 0; x < data.length; x++) {
+            var item = data[x];
+            if (!ys[item.respondent_id]) {
+                ys[item.respondent_id] = [];
+            }
+            ys[item.respondent_id]["loan_type_" + item.loan_type] = item.count;
+
+        }
+        var final = [];
+        for (var x in ys) {
+            final.push({
+                respondent_id: x,
+                loan_type_1: ys[x]["loan_type_1"],
+                loan_type_2: ys[x]["loan_type_2"],
+                loan_type_3: ys[x]["loan_type_3"]
+            });
+        }
+        var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["loan_type_1", "loan_type_2"] });
+        console.log(chartData);
+
+        $scope.config = {
+            title: 'Products',
+            tooltips: true,
+            labels: false,
+            mouseover: function () { },
+            mouseout: function () { },
+            click: function () { },
+            legend: {
+                display: true,
+                //could be 'left, right'
+                position: 'right'
+            }
+        };
+        chartData.series = ["Conventional"," FHA "]
+        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
+        $scope.chartData = chartData;
+    }
+
+
 
     $scope.PopulateLenderTable = function (type) {
         
@@ -151,8 +197,7 @@ app.controller('headerController', function headerController($rootScope,$scope, 
         $scope.All = type == 0 ? true : false;
         $scope.FHA = type == 1 ? true : false;;
         $scope.VA = type == 2 ? true : false;;
-        //console.log($scope.data);
-        console.log(type);
+
         var where = "";
         if (type != 0) {
             where = "and loan_type=" + type;
@@ -164,6 +209,52 @@ app.controller('headerController', function headerController($rootScope,$scope, 
             data[x]["VA"] = $scope.VA;
         }
         
+
+        //for chart
+        where = '';
+        if (type != 0) {
+            where = 'WHERE loan_type=' + type;
+        }
+        var allData = alasql('select * from ? '+where, [ $scope.allData]);
+        var ys = [];
+        for (var x = 0; x < allData.length; x++) {
+            var item = allData[x];
+            if (!ys[item.respondent_id]) {
+                ys[item.respondent_id] = [];
+            }
+            ys[item.respondent_id]["action_taken_" + item.action_taken] = item.count;
+
+        }
+        var final = [];
+        for (var x in ys) {
+            final.push({
+                respondent_id: x,
+                action_taken_1: ys[x]["action_taken_1"],
+                action_taken_2: ys[x]["action_taken_2"]
+            });
+        }
+
+        var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1", "action_taken_2"] });
+        console.log(chartData);
+
+        $scope.config = {
+            title: 'Approvals/Disapprovals',
+            tooltips: true,
+            labels: false,
+            mouseover: function () { },
+            mouseout: function () { },
+            click: function () { },
+            legend: {
+                display: true,
+                //could be 'left, right'
+                position: 'right'
+            }
+        };
+        chartData.series = ["Approved ", " Rejected "]
+        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
+        $scope.chartData = chartData;
+        
+        //end chart 
         var list = [];
         
         for (var i = 0; i < data.length; i++) {
@@ -185,10 +276,10 @@ app.controller('headerController', function headerController($rootScope,$scope, 
         });
 
         $scope.showTable = data.length>0;
-        console.log(query);
+   
         var finalQuery = configService.getConfig('institutionsUrl') +'?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
         dataService.getData(finalQuery).then(function (res) {
-            console.log(res.results);
+       
             var newData = alasql("select respondent_name as Name,respondent_address as Address from ? Group by respondent_name,respondent_address", [res.results]);
             for (var x in newData) {
                 newData[x]["FHA"] = $scope.FHA;
