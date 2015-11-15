@@ -30,11 +30,6 @@ app.controller('headerController', function headerController($rootScope,$scope, 
             var results = angular.fromJson(data).table.data;
             var states = [{ Code: 0, Value: 'Select State' }];
             for (var i in results) {
-                //if (i.length === 1)
-                //{
-                //    debugger;
-                //    results[i]._id = '0' + results[i]._id;
-                //}
                 states.push({ Code: results[i]._id, Value: results[i].name })
             }
             $scope.lookupState = states;
@@ -49,39 +44,7 @@ app.controller('headerController', function headerController($rootScope,$scope, 
             $scope.lookupLoanPurpose = newData;
         });
 
-        //lookupService.getLookup('state_code').then(function (data) {
-        //    var lookupResults = angular.fromJson(data).table.data;
-        //    var newData = [];
-        //    for (var i in lookupResults) {
-        //        newData.push({ Code: lookupResults[i]._id, Value: lookupResults[i].name });
-        //    }
-        //    $scope.lookupLoanPurpose = newData;
-        //});
     }
-
-
-
-
-    //$scope.lookupLoanPurpose = 
-    //    [
-    //                    { Code: 0, Value: 'Select Loan Purpose' },
-    //                    { Code: 1, Value: 'Home purchase' },
-    //                    { Code: 2, Value: 'Home improvement' },
-    //                    { Code: 3, Value: 'Refinancing' }
-    //    ];
-
-
-
-    //$scope.lookupState =
-    //    [
-    //                    { Code: 0, Value: 'Select State' },
-    //                    { Code: 1, Value: 'VA' },
-    //                    { Code: 2, Value: 'MD' },
-    //                    { Code: 3, Value: 'DC' }
-    //    ];
-
-
-
 
     $scope.LoanPurposeSelected = function (LoanPurposeCode, LoanPurposeValue) {
         $scope.SelectedLoanPurposeValue = LoanPurposeValue;
@@ -163,6 +126,8 @@ app.controller('headerController', function headerController($rootScope,$scope, 
                 var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
                 var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
                 var a = alasql('SELECT respondent_id  from ? where loan_type = 4  GROUP by respondent_id', [newData.results]);
+                console.log("this is x");
+                console.log(x);
                 $scope.TotalLender = (x.length == 1 && !x[0].respondent_id) ? 0 : x.length;
                 $scope.TotalFHA = (y.length == 1 && !y[0].respondent_id) ? 0 : y.length;
                 $scope.TotalVA = (z.length == 1 && !z[0].respondent_id) ? 0 : z.length;
@@ -178,48 +143,6 @@ app.controller('headerController', function headerController($rootScope,$scope, 
 
         return;
      }
-    function makeCall(query, then) {
-        dataService.getData(query).then(function (data) {
-            if (angular.fromJson(data).computing === null) {
-                $scope.loanData = angular.fromJson(data).results;
-                var respondentIds = "";
-                for (var i in $scope.loanData) {
-                    respondentIds += "'" + $scope.loanData[i].respondent_id.toString() + "',";
-                }
-                var where = "(" + respondentIds.substr(0, respondentIds.length - 1) + ")";
-                query = queryService.getQueryString({
-                    "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
-                        'respondent_state', 'respondent_zip_code'],
-                    "where": [{
-                        "key": "respondent_id",
-                        "value": where,
-                        "operator": " IN"
-                    }],
-                    "orderBy": {
-                        "columns": ['respondent_name', 'respondent_id'],
-                        "suffix": "DESC"
-                    },
-                    "groupBy": []
-                });
-                var finalQuery = configService.getConfig('institutionsUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
-                console.log(finalQuery);
-                makeNextCall(finalQuery);
-
-            }
-
-            else
-                makeCall(query);
-        });
-    }
-    function makeNextCall(query) {
-        dataService.getData(query).then(function (data) {
-            if (angular.fromJson(data).computing === null) {
-                $scope.lenderData = angular.fromJson(data).results;
-            }
-            else
-                makeNextCall(query)
-        });
-    }
 
     $scope.PopulateLenderTable = function (type) {
         
@@ -229,14 +152,19 @@ app.controller('headerController', function headerController($rootScope,$scope, 
         $scope.FHA = type == 1 ? true : false;;
         $scope.VA = type == 2 ? true : false;;
         //console.log($scope.data);
-        var data = alasql('SELECT top 10 respondent_id as Name, respondent_id as Address  from ? WHERE action_taken=1 GROUP by respondent_id ', [$scope.data.results]);
+        console.log(type);
+        var where = "";
+        if (type != 0) {
+            where = "and loan_type=" + type;
+        }
+        var data = alasql('SELECT top 10 respondent_id as Name, respondent_id as Address  from ? WHERE action_taken in (2,1) '+where+' GROUP by respondent_id ', [$scope.data.results]);
 
         for (var x in data) {
             data[x]["FHA"] = $scope.FHA;
             data[x]["VA"] = $scope.VA;
         }
         
-        var list = [];//alasql('SELECT top 10 respondent_id  from ? GROUP by respondent_id', [$scope.data.results])
+        var list = [];
         
         for (var i = 0; i < data.length; i++) {
             list.push("'"+data[i].Name+"'");
