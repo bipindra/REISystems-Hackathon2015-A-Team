@@ -16,9 +16,9 @@ describe('Data Generator Service Test test', function () {
 
         it('returns data for charts', function () {
             var service = $injector.get('uiDataGeneratorService');
-            //console.log(service);
-            var expected = ({ data: [Object({ x: 'name', y: [1] })] });
-            expect(service.CreateChartData([{ a: 'name', b: 1 } ], { x_field: 'a', y_field: ['b'] })).toEqual(expected);
+            var expected = ({ data: [({ x: 'name', y: [1] })] });
+            var input = service.createChartData([{ a: 'name', b: 1 }], { x_field: 'a', y_fields: ['b'] });
+           expect(input).toEqual(expected);
         });
     });
 });
