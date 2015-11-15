@@ -117,8 +117,7 @@ app.controller('headerController', function headerController($scope, lookupServi
 
     $scope.SearchClicked = function () {
         var query = queryService.getQueryString({
-            "select": ['loan_type', 'loan_type_name', 'applicant_income_000s', 'action_taken', 'respondent_id',
-                'denial_reason_1', 'denial_reason_1_name', 'property_type','property_type_name', 'loan_amount_000s'],
+            "select": ['loan_type', 'loan_type_name','action_taken', 'respondent_id'],
             "where": [{
                 "key": "state_code",
                 "value": $scope.SelectedStateCode,
@@ -133,42 +132,89 @@ app.controller('headerController', function headerController($scope, lookupServi
                 "operator": "="
             }],
             "orderBy": {
-                "columns": ['respondent_id', 'count'],
+                "columns": ['respondent_id'],
                 "suffix": "DESC"
             },
-            "groupBy": ['action_taken', 'respondent_id']
+            "groupBy": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id']
         });
-        var finalQuery = configService.getConfig('larUrl') + query.toString();
+        var finalQuery = configService.getConfig('larUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
         alert(finalQuery);
-        dataService.getData(query).then(function (data) {
-            $scope.loanData = angular.fromJson(data).results;
-            var respondentIds = "";
-            for(var i in $scope.loanData)
-            {
-                respondentIds += $scope.loanData[i].respondent_id.toString() + ", ";
-            }
-            var where = "(" + respondentIds + ")";
-            query = queryService.getQueryString({
-                "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
-                    'respondent_state', 'respondent_zip_code', 'lar_count'],
-                "where": [{
-                    "key": "respondent_id",
-                    "value": where,
-                    "operator": "IN"
-                }],
-                "orderBy": {
-                    "columns": ['respondent_name','respondent_id'],
-                    "suffix": "DESC"
-                },
-                "groupBy": ['respondent_id']
-            });
-            finalQuery = configService.getConfig('institutionsUrl') + query.toString();
-            alert(finalQuery);
-            dataService.getData(query).then(function (data) {
-                $scope.lenderData = angular.fromJson(data).results;
-            });
-        });
+        makeCall(finalQuery);
+        //dataService.getData(finalQuery).then(function (data) {
+        //    if (angular.fromJson(data))
+        //    $scope.loanData = angular.fromJson(data).results;
+            //var respondentIds = "";
+            //for(var i in $scope.loanData)
+            //{
+            //    respondentIds += $scope.loanData[i].respondent_id.toString() + ", ";
+            //}
+            //var where = "(" + respondentIds + ")";
+            //query = queryService.getQueryString({
+            //    "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
+            //        'respondent_state', 'respondent_zip_code'],
+            //    "where": [{
+            //        "key": "respondent_id",
+            //        "value": where,
+            //        "operator": "IN"
+            //    }],
+            //    "orderBy": {
+            //        "columns": ['respondent_name','respondent_id'],
+            //        "suffix": "DESC"
+            //    },
+            //    "groupBy": []
+            //});
+            //finalQuery = configService.getConfig('institutionsUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+            //alert(finalQuery);
+            //dataService.getData(finalQuery).then(function (data) {
+            //    $scope.lenderData = angular.fromJson(data).results;
+            //});
+        //});
         alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
+    }
+    function makeCall(query, then)
+    {
+        dataService.getData(query).then(function (data) {
+            if (angular.fromJson(data).computing === null)
+            {
+                $scope.loanData = angular.fromJson(data).results;
+                var respondentIds = "";
+                for(var i in $scope.loanData)
+                {
+                    respondentIds += "'" + $scope.loanData[i].respondent_id.toString() + "',";
+                }
+                var where = "(" + respondentIds.substr(0,respondentIds.length-1) + ")";
+                query = queryService.getQueryString({
+                    "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
+                        'respondent_state', 'respondent_zip_code'],
+                    "where": [{
+                        "key": "respondent_id",
+                        "value": where,
+                        "operator": " IN"
+                    }],
+                    "orderBy": {
+                        "columns": ['respondent_name','respondent_id'],
+                        "suffix": "DESC"
+                    },
+                    "groupBy": []
+                });
+                var finalQuery = configService.getConfig('institutionsUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+                alert(finalQuery);
+                makeNextCall(finalQuery);
+                
+            }
+                
+            else
+                makeCall(query);
+        });
+    }
+    function makeNextCall(query) {
+        dataService.getData(query).then(function (data) {
+            if (angular.fromJson(data).computing === null) {
+                $scope.lenderData = angular.fromJson(data).results;
+            }
+            else
+             makeNextCall(query)
+        });
     }
 
     $scope.PopulateLenderTable = function (type) {
