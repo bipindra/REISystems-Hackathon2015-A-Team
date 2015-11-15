@@ -84,16 +84,41 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th ng-show="All || FHA ">FHA</th>
-                <th ng-show="All || VA">VA</th>
+                <th>FHA</th>
+                <th>VA</th>
+                <th>FSA</th>
                 <th>Address</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="Lender in LendersData">
                 <td>{{Lender.Name}}</td>
-                <td ng-show="All || FHA ">{{Lender.FHA}}</td>
-                <td ng-show="All || VA ">{{Lender.VA}}</td>
+                <!--<td ng-show="All || FHA ">{{Lender.FHA}}</td>-->
+                <!--<td ng-show="All || VA ">{{Lender.VA}}</td>-->
+                <td>
+                    <label ng-if="All || FHA" class="checkbox-inline">
+                        <input type="checkbox" checked="checked" disabled>
+                    </label>
+                    <label ng-if="(VA || FSA) && !All" class="checkbox-inline">
+                        <input type="checkbox" disabled>
+                    </label>
+                </td>
+                <td>
+                    <label ng-if="All || VA" class="checkbox-inline">
+                        <input type="checkbox" checked="checked" disabled>
+                    </label>
+                    <label ng-if="(FHA || FSA) && !All" class="checkbox-inline">
+                        <input type="checkbox" disabled>
+                    </label>
+                </td>
+                <td>
+                    <label ng-if="All || FSA" class="checkbox-inline">
+                        <input type="checkbox" checked="checked" disabled>
+                    </label>
+                    <label ng-if="(FHA || VA) && !All" class="checkbox-inline">
+                        <input type="checkbox" disabled>
+                    </label>
+                </td>
                 <td>{{Lender.Address}}</td>
                 <td><input type="checkbox" ng-click="LenderSelected(Lender);" /></td>
             </tr>
