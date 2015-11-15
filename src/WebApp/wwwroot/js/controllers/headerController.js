@@ -349,7 +349,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             //var result = [];
 
             var pieChartData = { data: [] };
-
+            if(lendersData)
             for (var i = 0; i < lendersData.length; i++) {
                 if (lendersData[i].denial_reason_1) {
 
