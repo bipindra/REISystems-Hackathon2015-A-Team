@@ -1,5 +1,5 @@
 ﻿'use strict'
-app.controller('headerController', function headerController($scope, lookupService, queryService) {
+app.controller('headerController', function headerController($scope, lookupService, queryService, dataService, configService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
@@ -117,7 +117,8 @@ app.controller('headerController', function headerController($scope, lookupServi
 
     $scope.SearchClicked = function () {
         var query = queryService.getQueryString({
-            "select": [('COUNT()'), 'action_taken', 'respondent_id'],
+            "select": ['loan_type', 'loan_type_name', 'applicant_income_000s', 'action_taken', 'respondent_id',
+                'denial_reason_1', 'denial_reason_1_name', 'property_type','property_type_name', 'loan_amount_000s'],
             "where": [{
                 "key": "state_code",
                 "value": $scope.SelectedStateCode,
@@ -130,20 +131,42 @@ app.controller('headerController', function headerController($scope, lookupServi
                 "key": "loan_purpose",
                 "value": $scope.SelectedLoanPurposeCode,
                 "operator": "="
-            }, {
-                "key": "state_code",
-                "value": "1",
-                "operator": "="
-            }, {
-                "key": "property_type",
-                "value": "1",
-                "operator": "="
             }],
             "orderBy": {
                 "columns": ['respondent_id', 'count'],
                 "suffix": "DESC"
             },
             "groupBy": ['action_taken', 'respondent_id']
+        });
+        var finalQuery = configService.getConfig('larUrl') + query.toString();
+        alert(finalQuery);
+        dataService.getData(query).then(function (data) {
+            $scope.loanData = angular.fromJson(data).results;
+            var respondentIds = "";
+            for(var i in $scope.loanData)
+            {
+                respondentIds += $scope.loanData[i].respondent_id.toString() + ", ";
+            }
+            var where = "(" + respondentIds + ")";
+            query = queryService.getQueryString({
+                "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
+                    'respondent_state', 'respondent_zip_code', 'lar_count'],
+                "where": [{
+                    "key": "respondent_id",
+                    "value": where,
+                    "operator": "IN"
+                }],
+                "orderBy": {
+                    "columns": ['respondent_name','respondent_id'],
+                    "suffix": "DESC"
+                },
+                "groupBy": ['respondent_id']
+            });
+            finalQuery = configService.getConfig('institutionsUrl') + query.toString();
+            alert(finalQuery);
+            dataService.getData(query).then(function (data) {
+                $scope.lenderData = angular.fromJson(data).results;
+            });
         });
         alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
     }
