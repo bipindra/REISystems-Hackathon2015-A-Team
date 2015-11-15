@@ -3,7 +3,7 @@ app.factory('dataService', ['$http', '$q', function ($http, $q) {
 
     function getData(url) {
         var deferred = $q.defer();
-        var config = {};
+        var config = { cache : true};
         $http.get(url, config).then(function (response) {
             deferred.resolve(response.data);
         }, function (response) {

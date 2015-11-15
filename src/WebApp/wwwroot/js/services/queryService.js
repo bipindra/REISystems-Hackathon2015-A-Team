@@ -23,7 +23,7 @@ app.factory('queryService', function () {
             if (queryObj.where && queryObj.where.length > 0) {
                 for (var i = 0; i < queryObj.where.length; i++) {
                     if (queryObj.where[i].key && queryObj.where[i].value && queryObj.where[i].operator && queryObj.where[i].key !== "" && queryObj.where[i].value !== "" && queryObj.where[i].operator !== "") {
-                        tempWhereArray.push(queryObj.where[i].key + queryObj.where[i].operator + queryObj.where[i].value);
+                        tempWhereArray.push(queryObj.where[i].key + escape(queryObj.where[i].operator) + queryObj.where[i].value);
                     }
                 }
 
@@ -49,7 +49,7 @@ app.factory('queryService', function () {
             }
 
             if (orderByStr !== "") {
-                orderByStr = "$order=" + orderByStr;
+                orderByStr = "$orderBy=" + orderByStr;
                 queryResult = queryResult + "&" + orderByStr;
             }
 

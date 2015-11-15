@@ -115,8 +115,9 @@ app.controller('headerController', function headerController($scope, lookupServi
     }
 
     $scope.SearchClicked = function () {
-        var query = queryService.getQueryString({
-            "select": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
+        
+        var input={
+            "select": [escape('COUNT()'),'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
             "where": [{
                 "key": "state_code",
                 "value": $scope.SelectedStateCode,
@@ -129,16 +130,53 @@ app.controller('headerController', function headerController($scope, lookupServi
                 "key": "loan_purpose",
                 "value": $scope.SelectedLoanPurposeCode,
                 "operator": "="
+            }, {
+                "key": "action_taken",
+                "value": "(1,2)",
+                "operator": " in "
             }],
             "orderBy": {
-                "columns": ['respondent_id'],
+                "columns": ['count'],
                 "suffix": "DESC"
             },
-            "groupBy": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id']
-        });
-        var finalQuery = configService.getConfig('larUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
-        alert(finalQuery);
-        makeCall(finalQuery);
+            "groupBy": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
+            "limit":100
+        };
+        var t = function (q) {
+            var query = queryService.getQueryString(q);
+            return configService.getConfig('larUrl') + '?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+        }
+        input.limit = 1;
+        var finalQuery = t(input);
+        
+        var url = finalQuery;//'https://api.consumerfinance.gov/data/hmda/slice/hmda_lar.json?%24select=respondent_id%2C++loan_type%2Ccounty_code%2C+COUNT%28%29%2Caction_taken&%24where=loan_purpose+%3D+1+and+state_code+%3D+51+and+county_code+%3D+013+and+action_taken+in+%281%2C2%29&%24group=respondent_id%2C++loan_type%2Ccounty_code%2Caction_taken&%24orderBy=count+desc&%24limit=1&%24offset=0&%24format=json';
+        console.log(url);
+        dataService.getData(url)
+        .then(function (data) {
+            //console.log(data.total);
+            //var url = 'https://api.consumerfinance.gov/data/hmda/slice/hmda_lar.json?%24select=respondent_id%2C++loan_type%2Ccounty_code%2C+COUNT%28%29%2Caction_taken&%24where=loan_purpose+%3D+1+and+state_code+%3D+51+and+county_code+%3D+013+and+action_taken+in+%281%2C2%29&%24group=respondent_id%2C++loan_type%2Ccounty_code%2Caction_taken&%24orderBy=count+desc&%24limit=' + data.total + '&%24offset=0&%24format=json'
+            input.limit = data.total;
+            var url = t(input);
+            console.log(url);
+            dataService.getData(url).then(function (newData) {
+                console.log(newData);
+                var x = alasql('SELECT respondent_id  from ? GROUP by respondent_id', [newData.results]);
+                var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
+                var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
+                var a = alasql('SELECT respondent_id  from ? where loan_type = 4  GROUP by respondent_id', [newData.results]);
+                $scope.TotalLender = (x.length == 1 && !x[0].respondent_id) ? 0 : x.length;
+                $scope.TotalFHA = (y.length == 1 && !y[0].respondent_id) ? 0 : y.length;
+                $scope.TotalVA = (z.length == 1 && !z[0].respondent_id) ? 0 : z.length;
+                $scope.TotalFSA = (a.length == 1 && !a[0].respondent_id) ? 0 : a.length;
+                $scope.data = newData;
+                window.data = newData;
+                
+            });
+        }, function (data) { console.log(data); });
+
+        return;
+        //alert(finalQuery);
+        //makeCall(finalQuery);
         //dataService.getData(finalQuery).then(function (data) {
         //    if (angular.fromJson(data))
         //    $scope.loanData = angular.fromJson(data).results;
@@ -194,7 +232,7 @@ app.controller('headerController', function headerController($scope, lookupServi
                     "groupBy": []
                 });
                 var finalQuery = configService.getConfig('institutionsUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
-                alert(finalQuery);
+                console.log(finalQuery);
                 makeNextCall(finalQuery);
 
             }
@@ -214,15 +252,60 @@ app.controller('headerController', function headerController($scope, lookupServi
     }
 
     $scope.PopulateLenderTable = function (type) {
-        debugger;
+        
+
+
         $scope.All = type == 0 ? true : false;
         $scope.FHA = type == 1 ? true : false;;
         $scope.VA = type == 2 ? true : false;;
-        $scope.LendersData = [
-            { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
-            { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
-            { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
-        ];
+        //console.log($scope.data);
+        var data = alasql('SELECT top 10 respondent_id as Name, respondent_id as Address  from ? WHERE action_taken=1 GROUP by respondent_id ', [$scope.data.results]);
+
+        for (var x in data) {
+            data[x]["FHA"] = $scope.FHA;
+            data[x]["VA"] = $scope.VA;
+        }
+        
+        var list = [];//alasql('SELECT top 10 respondent_id  from ? GROUP by respondent_id', [$scope.data.results])
+        
+        for (var i = 0; i < data.length; i++) {
+            list.push("'"+data[i].Name+"'");
+        }
+        var query = queryService.getQueryString({
+            "select": ['respondent_id', 'respondent_name', 'respondent_address',escape('COUNT()')],
+            "where": [{
+                "key": "respondent_id",
+                "value": "("+list.join(',')+")",
+                "operator": " IN"
+            }],
+            "orderBy": {
+                "columns": ['count'],
+                "suffix": "DESC"
+            },
+            "groupBy": ['respondent_id','respondent_name','respondent_address'],
+            limit:data.length
+        });
+
+        
+        console.log(query);
+        var finalQuery = configService.getConfig('institutionsUrl') +'?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+        dataService.getData(finalQuery).then(function (res) {
+            console.log(res.results);
+            var newData = alasql("select respondent_name as Name,respondent_address as Address from ? Group by respondent_name,respondent_address", [res.results]);
+            for (var x in newData) {
+                newData[x]["FHA"] = $scope.FHA;
+                newData[x]["VA"] = $scope.VA;
+            }
+            $scope.LendersData = newData;
+        }, function (error) {
+            console.log(error);});
+
+        
+        //$scope.LendersData = [
+        //    { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
+        //    { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
+        //    { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
+        //];
     }
 
 });
