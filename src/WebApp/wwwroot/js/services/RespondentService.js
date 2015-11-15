@@ -1,4 +1,4 @@
-﻿app.factory('respondentService', ['$q', 'dataService', function ($q, dataService) {
+﻿app.factory('respondentService', ['$q', 'dataService', 'configService', function ($q, dataService, configService) {
 
     function getRespondents(filter) {
         var url = configService.getConfig('institutionsUrl') + filter;
