@@ -161,9 +161,10 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
         //$scope.showTable = true;
         $scope.All = type == 0 ? true : false;
-        $scope.FHA = type == 1 ? true : false;;
-        $scope.VA = type == 2 ? true : false;;
-
+        $scope.FHA = type == 2 ? true : false;
+        $scope.VA = type == 3 ? true : false;
+        $scope.FSA = type == 4 ? true : false;
+        
         var where = "";
         if (type != 0) {
             where = "and loan_type=" + type;
@@ -173,6 +174,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         for (var x in data) {
             data[x]["FHA"] = $scope.FHA;
             data[x]["VA"] = $scope.VA;
+            data[x]["FSA"] = $scope.FSA;
         }
         
 
