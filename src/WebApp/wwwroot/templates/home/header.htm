@@ -65,16 +65,20 @@
 
 <div class="row-fluid">
     <div class="span3">
-        <div class="col-md-4">
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(0)">35 Total Mortgage Lenders</button>
+        <div class="col-md-3" ng-show="TotalLender>0">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(0)">{{TotalLender}} Total Lenders</button>
         </div>
 
-        <div class="col-md-4">
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(1)">20 Lenders Provide FHA Loan in past</button>
+        <div class="col-md-3" ng-show="TotalFHA>0">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(1)">{{TotalFHA}} Total FHA</button>
         </div>
 
-        <div class="col-md-4">
-            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">5 Lenders Provide FHA Loan in past</button>
+        <div class="col-md-3" ng-show="TotalVA>0">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">{{TotalVA}} TotalVA</button>
+        </div>
+
+        <div class="col-md-3" ng-show="TotalFSA>0">
+            <button type="button" class="btn btn-success" ng-click="PopulateLenderTable(2)">{{TotalFSA}}Total FSA</button>
         </div>
     </div>
 </div>
