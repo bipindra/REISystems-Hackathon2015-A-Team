@@ -1,5 +1,5 @@
 ﻿'use strict'
-app.controller('headerController', function headerController($scope, lookupService, queryService, dataService, configService) {
+app.controller('headerController', function headerController($rootScope,$scope, lookupService, queryService, dataService, configService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
@@ -115,7 +115,8 @@ app.controller('headerController', function headerController($scope, lookupServi
     }
 
     $scope.SearchClicked = function () {
-        
+        $scope.showButtons = true;
+        $scope.showTable = false;
         var input={
             "select": [escape('COUNT()'),'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
             "where": [{
@@ -149,17 +150,15 @@ app.controller('headerController', function headerController($scope, lookupServi
         input.limit = 1;
         var finalQuery = t(input);
         
-        var url = finalQuery;//'https://api.consumerfinance.gov/data/hmda/slice/hmda_lar.json?%24select=respondent_id%2C++loan_type%2Ccounty_code%2C+COUNT%28%29%2Caction_taken&%24where=loan_purpose+%3D+1+and+state_code+%3D+51+and+county_code+%3D+013+and+action_taken+in+%281%2C2%29&%24group=respondent_id%2C++loan_type%2Ccounty_code%2Caction_taken&%24orderBy=count+desc&%24limit=1&%24offset=0&%24format=json';
-        console.log(url);
+        var url = finalQuery;
+        $rootScope.loading = true;
         dataService.getData(url)
         .then(function (data) {
-            //console.log(data.total);
-            //var url = 'https://api.consumerfinance.gov/data/hmda/slice/hmda_lar.json?%24select=respondent_id%2C++loan_type%2Ccounty_code%2C+COUNT%28%29%2Caction_taken&%24where=loan_purpose+%3D+1+and+state_code+%3D+51+and+county_code+%3D+013+and+action_taken+in+%281%2C2%29&%24group=respondent_id%2C++loan_type%2Ccounty_code%2Caction_taken&%24orderBy=count+desc&%24limit=' + data.total + '&%24offset=0&%24format=json'
-            input.limit = data.total;
+                input.limit = data.total;
             var url = t(input);
-            console.log(url);
+            
             dataService.getData(url).then(function (newData) {
-                console.log(newData);
+                //console.log(newData);
                 var x = alasql('SELECT respondent_id  from ? GROUP by respondent_id', [newData.results]);
                 var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
                 var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
@@ -170,44 +169,15 @@ app.controller('headerController', function headerController($scope, lookupServi
                 $scope.TotalFSA = (a.length == 1 && !a[0].respondent_id) ? 0 : a.length;
                 $scope.data = newData;
                 window.data = newData;
+                $rootScope.loading = false;
                 
             });
-        }, function (data) { console.log(data); });
+        }, function (data) {
+            $rootScope.loading = false;
+        });
 
         return;
-        //alert(finalQuery);
-        //makeCall(finalQuery);
-        //dataService.getData(finalQuery).then(function (data) {
-        //    if (angular.fromJson(data))
-        //    $scope.loanData = angular.fromJson(data).results;
-        //var respondentIds = "";
-        //for(var i in $scope.loanData)
-        //{
-        //    respondentIds += $scope.loanData[i].respondent_id.toString() + ", ";
-        //}
-        //var where = "(" + respondentIds + ")";
-        //query = queryService.getQueryString({
-        //    "select": ['respondent_id', 'respondent_name', 'respondent_address', 'respondent_city',
-        //        'respondent_state', 'respondent_zip_code'],
-        //    "where": [{
-        //        "key": "respondent_id",
-        //        "value": where,
-        //        "operator": "IN"
-        //    }],
-        //    "orderBy": {
-        //        "columns": ['respondent_name','respondent_id'],
-        //        "suffix": "DESC"
-        //    },
-        //    "groupBy": []
-        //});
-        //finalQuery = configService.getConfig('institutionsUrl') + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
-        //alert(finalQuery);
-        //dataService.getData(finalQuery).then(function (data) {
-        //    $scope.lenderData = angular.fromJson(data).results;
-        //});
-        //});
-        alert('Loan Purpose : ' + $scope.SelectedLoanPurposeCode + ', State : ' + $scope.SelectedStateCode + ', County :' + $scope.SelectedCountyCode);
-    }
+     }
     function makeCall(query, then) {
         dataService.getData(query).then(function (data) {
             if (angular.fromJson(data).computing === null) {
@@ -254,7 +224,7 @@ app.controller('headerController', function headerController($scope, lookupServi
     $scope.PopulateLenderTable = function (type) {
         
 
-
+        //$scope.showTable = true;
         $scope.All = type == 0 ? true : false;
         $scope.FHA = type == 1 ? true : false;;
         $scope.VA = type == 2 ? true : false;;
@@ -286,7 +256,7 @@ app.controller('headerController', function headerController($scope, lookupServi
             limit:data.length
         });
 
-        
+        $scope.showTable = data.length>0;
         console.log(query);
         var finalQuery = configService.getConfig('institutionsUrl') +'?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
         dataService.getData(finalQuery).then(function (res) {
