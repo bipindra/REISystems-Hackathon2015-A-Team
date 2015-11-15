@@ -4,14 +4,21 @@
         console.log(data);
         for (var i = 0; i < data.length; i++) {
             var x = data[i][config.x_field];
-
-            var y = [];
+            result[x] = result[x] || { x: x, y: [] };
+            
             for (var j = 0; j < config.y_field.length; j++) {
-                y.push(data[i][config.y_field[j]]);
+
+                var yData = data[i][config.y_field[j]] || 0;
+                result[x].y.push(yData);
             }
-            result.push({ x: x, y: y });
+
+            
         }
-        return { data: result };
+        var final = [];
+        for (var item in result) {
+            final.push(result[item]);
+        }
+        return { data: final };
     }
 
     return {

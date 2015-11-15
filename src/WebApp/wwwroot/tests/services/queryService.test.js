@@ -17,13 +17,7 @@ describe('query service test', function () {
         it('returns query string with just one column to select ', function () {
             var service = $injector.get('queryService');
             var dummy = {
-                "select": ["applicant_income_000s"],
-                "where": [],
-                "orderBy": {
-                    "columns": [],
-                    "suffix": ""
-                },
-                "groupBy": []
+                "select": ["applicant_income_000s"]
             };
             expect(service.getQueryString(dummy)).toEqual('$select=applicant_income_000s');
         });

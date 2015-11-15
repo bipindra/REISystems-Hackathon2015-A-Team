@@ -6,15 +6,15 @@ var app = angular.module('myApp', ['ui.router', 'angularCharts'])
 
     $stateProvider
 
-        .state('home', {
-            url: '/home',
+        .state('exhome', {
+            url: '/exhome',
             templateUrl: 'templates/home/index.htm',
             controller: 'homeController'
 
         })
 
-        .state('header', {
-            url: '/header',
+        .state('home', {
+            url: '/home',
             templateUrl: 'templates/home/header.htm',
             controller: 'headerController'
 
