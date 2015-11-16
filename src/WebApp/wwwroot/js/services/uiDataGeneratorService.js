@@ -14,7 +14,7 @@
                         var val = data[i][config.y_fields[j]] || 0;
                         y.push(val);
                         var text = j == 0 ? 'Approved ' : 'Rejected ';
-                        tt.push(data[i][config.tooltip_field] + '(' +text  + val + ')');
+                        tt.push((data[i][config.tooltip_field] || '') + '(' +text  + val + ')');
                     }
             }
             result.push({ x: x, y: y, tooltip:tt });
