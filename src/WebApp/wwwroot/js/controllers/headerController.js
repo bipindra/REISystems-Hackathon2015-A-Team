@@ -151,7 +151,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 $scope.data = newData;
                 window.data = newData;
                 $rootScope.loading = false;
-                $('[data-toggle="tooltip"]').tooltip();
+                $('[data-toggle="tooltip"]').tooltip({ template: "<div class='tooltip' ><div class='tooltip-inner' style='text-align:left; max-width:5000px'></div></div>", html: true });
                 //PopulateLenderTable(0);
                 
             });
