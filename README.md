@@ -23,7 +23,7 @@ The application uses the Angular JS charts to generate the charts and graphs for
 2. Install Github
 3. Install the .Net framework open source 1.0.0-beta5. Refer https://github.com/dotnet/roslyn 
 
-#####Build Instructions:
+#####Build Steps:
 
 ######If building from command line 
 1. first clone the source code from Github using git clone https://github.com/REI-Systems/REISystems-Hackathon2015-A-Team
@@ -39,27 +39,27 @@ The application uses the Angular JS charts to generate the charts and graphs for
 3. Run the solution using F5 or Run Button
 
 ####Contact information 
-1. Bipindra Shreshta
-    
-    Phone:409-225-8714
+(1) Bipindra Shreshta
+
+    Phone: 409-225-8714
     Email: bshrestha@reisystems.com
 
 (2) Ateet Vora
     
-    Phone:571-229-2784
-    Email:avora@reisystems.com
+    Phone: 571-229-2784
+    Email: avora@reisystems.com
 
 (3) Prasad Pai
     
-    Phone:201-920-1512
-    Email:prasad.pai@reisystems.com
+    Phone: 201-920-1512
+    Email: prasad.pai@reisystems.com
 
 (4) Scott Keeler
     
-    Phone:703-480-9203
-    Email:scott.keeler@reisystems.com
+    Phone: 703-480-9203
+    Email: scott.keeler@reisystems.com
 
 (5) Yashesh Shah
 
     Phone: 571-721-9141
-    Email - yshah@reisystems.com
+    Email: yshah@reisystems.com
