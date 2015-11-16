@@ -5,12 +5,12 @@
 ####Design Approach
 
 The MortgageLender-Review.com application utlitizes the Consumer Financial Protection Bureau’s (CFPB) publicly available - Home Mortgage Disclosure Act (HMDA) data. The CFPB's Open Tech website provides the API to obtain the JSON source of the HMDA dataset.
-The MortgageLender.com application is mostly built as a Client side application utlizing web service to query the HMDA dataset. The application also uses the open source version of ASP.net. 
+The MortgageLender.com application is mostly built as a Client side application utlizing web service to query the HMDA dataset. The application also uses the open source/ cross platform version ASP.net 5. 
 
 This application is designed in SPA approach so that it can be easily converted into hybrid mobile applications. 
 
 ####Development Approach
-The team used GitHub version control and Trello boards for the agile planning, Visual Studio online for continous integration and deployment, Azure for hosting, Jasmine and karma for javascript unit test and Gulp for running tasks like build,clean, minification and starting the web server. The application is developed using the AngularJS on client side and ASP.Net on the server side. 
+The team used GitHub version control and Trello boards for the agile planning, Visual Studio online for continous integration and deployment, Azure for hosting, Jasmine and karma for javascript unit test and Gulp for running tasks like build,clean, minification and starting the web server. The application is developed using the AngularJS on client side and ASP.Net 5 on the server side. 
 
 The application is designed as a single page application. The data for the query and analysis is obtained using the web service to directly get the data. None of the data is stored on the server side. The client side application login follows the Angular js.
 
@@ -23,14 +23,14 @@ The application uses the Angular JS charts to generate the charts and graphs for
 #####PreRequisites
 1. Install NPM
 2. Install Github
-3. Install the .Net framework open source 1.0.0-beta5. Refer https://github.com/dotnet/roslyn 
+3. Install the .Net framework open source 1.0.0-beta5. to run ASP.Net 5 on your Windows, Linux or Mac.  Refer http://docs.asp.net/en/latest/getting-started/index.html. Check with command "dnvm list" to make sure that 1.0.0-beta5 is the active  dotnet version for your OS. If not, make it default by command "dnvm use 1.0.0-beta5.
 
 #####Build Steps:
 
 ######If building from command line 
 1. first clone the source code from Github using git clone https://github.com/REI-Systems/REISystems-Hackathon2015-A-Team
 2. Go to the folder src/WebApp
-3. Run command - dnu build 
+3. Run command - dnu restore, then run dnu build 
 4. Run command - npm install
 5. Run command - bower install
 6. Run command - dnx web or GULP
