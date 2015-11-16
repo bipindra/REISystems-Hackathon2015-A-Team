@@ -128,6 +128,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var url = finalQuery;
         $rootScope.loading = true;
         
+        console.log(url);
         dataService.getData(url)
         .then(function (data) {
                 input.limit = data.total;
@@ -147,7 +148,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 $scope.data = newData;
                 window.data = newData;
                 $rootScope.loading = false;
-                //PopulateLenderTable(0);
                 
             });
         }, function (data) {
@@ -180,7 +180,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         
 
         //for chart
-        $scope.Loan_Type = type
+        $scope.Loan_Type = type;
         $scope.chartData = ShowChart($scope.allData, type);;
         
         //end chart 
@@ -221,13 +221,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
         }, function (error) {
             console.log(error);
         });
-
-        
-        //$scope.LendersData = [
-        //    { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
-        //    { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
-        //    { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
-        //];
     }
 
     function ShowChart(allData, type) {
@@ -295,7 +288,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     $scope.SearchClicked = SearchClickHandler;
 
     $scope.LenderSelected = function (selectedLender, allLenders) {
-        console.log(selectedLender);
+
 
         $rootScope.loading = true;
 
@@ -418,25 +411,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
                         pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
                 }
             }
-
-
-
-
-
-            //var pdata = {
-            //    data: [{
-            //        x: "Approved",
-            //        y: [50],
-            //        tooltip: "this is tooltip"
-            //    }, {
-            //        x: "Rejected",
-            //        y: [20]
-            //    }]
-            //};
-
-            //uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1"] });
-            console.log(pieChartData);
-            
             var title = "Denial Reasons : " + lenderName;
             
             $scope.pieConfig = {
