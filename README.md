@@ -39,20 +39,27 @@ The application uses the Angular JS charts to generate the charts and graphs for
 3. Run the solution using F5 or Run Button
 
 ####Contact information 
-(1) Bipindra Shreshta
+1. Bipindra Shreshta
+    
     Phone:409-225-8714
     Email: bshrestha@reisystems.com
 
 (2) Ateet Vora
+    
     Phone:571-229-2784
     Email:avora@reisystems.com
 
 (3) Prasad Pai
+    
     Phone:201-920-1512
     Email:prasad.pai@reisystems.com
 
 (4) Scott Keeler
-    Phone:scott.keeler@reisystems.com
-    Email:703-480-9203
+    
+    Phone:703-480-9203
+    Email:scott.keeler@reisystems.com
 
+(5) Yashesh Shah
 
+    Phone: 571-721-9141
+    Email - yshah@reisystems.com
