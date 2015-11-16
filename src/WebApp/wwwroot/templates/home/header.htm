@@ -79,51 +79,56 @@ The Rural Housing Service (RHS) lends both directly to low income borrowers in r
     </div>
 </div>
 
-<div class="container" ng-show="showTable">
-    <table class="table table-hover" ng-show="LendersData && LendersData.length>0">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>FHA</th>
-                <th>VA</th>
-                <th>FSA</th>
-                <th>Address</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="Lender in LendersData">
+<div class="panel panel-info" ng-if="showChart">
+    <div class="panel-heading">List Of Top 10 Lenders</div>
+    <div class="panel-body">
+        <div class="container" ng-show="showTable">
+            <table class="table table-hover" ng-show="LendersData && LendersData.length>0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <!--<th>FHA</th>
+                        <th>VA</th>
+                        <th>FSA</th>-->
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="Lender in LendersData">
                 <td>{{Lender.Name}}</td>
                 <!--<td ng-show="All || FHA ">{{Lender.FHA}}</td>-->
                 <!--<td ng-show="All || VA ">{{Lender.VA}}</td>-->
-                <td>
-                    <label ng-if="All || FHA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(VA || FSA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
-                <td>
-                    <label ng-if="All || VA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(FHA || FSA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
-                <td>
-                    <label ng-if="All || FSA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(FHA || VA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
+                        <!--<td>
+                            <label ng-if="All || FHA" class="checkbox-inline">
+                                <img src="../../images/yes.png" />
+                            </label>
+                            <label ng-if="(va || fsa) && !all" class="checkbox-inline">
+                                <img src="../../images/no.png" />
+                            </label>
+                        </td>
+                        <td>
+                            <label ng-if="All || VA" class="checkbox-inline">
+                                <img src="../../images/yes.png" />
+                            </label>
+                            <label ng-if="(FHA || FSA) && !All" class="checkbox-inline">
+                                <img src="../../images/no.png" />
+                            </label>
+                        </td>
+                        <td>
+                            <label ng-if="All || FSA" class="checkbox-inline">
+                                <img src="../../images/yes.png" />
+                            </label>
+                            <label ng-if="(FHA || VA) && !All" class="checkbox-inline">
+                                <img src="../../images/no.png" />
+                            </label>
+                        </td>-->
                 <td>{{Lender.Address}}</td>
                 <!--<td><input type="checkbox" ng-click="LenderSelected(Lender);" /></td>-->
             </tr>
         </tbody>
     </table>
+        </div>
+    </div>
 </div>
 
 
