@@ -90,6 +90,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
     
     function SearchClickHandler() {
+        $scope.showLenderDropdown = false;
         $scope.showButtons = true;
         $scope.showTable = false;
         var input = {
@@ -190,6 +191,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
             list.push("'" + data[i].Name + "'");
         }
 
+        $scope.pieConfig1 = {};
+        $scope.pieChartDataAll = {};
         $scope.LenderSelected(list.join(','), true);
 
         var query = queryService.getQueryString({
@@ -218,6 +221,10 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 newData[x]["VA"] = $scope.VA;
             }
             $scope.LendersData = newData;
+
+            $scope.SelectedLenderValue = $scope.LendersData[0].Name;
+            $scope.showLenderDropdown = true;
+            $scope.LenderSelected($scope.LendersData[0].respondent_id, false);
         }, function (error) {
             console.log(error);
         });
@@ -296,11 +303,13 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var lenderName = "";
         if (selectedLender.respondent_id == undefined) {
             url = GetPieChartQuery(selectedLender)
-            lenderName = "All Lenders";
+            lenderName = "Denial Reason : All Lenders";
         }
         else {
             url = GetPieChartQuery(selectedLender.respondent_id)
             lenderName = selectedLender.Name;
+            $scope.SelectedLenderValue = lenderName;
+            $scope.showLenderDropdown = true;
         }
 
         dataService.getData(url)
@@ -414,7 +423,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             var title = "Denial Reasons : " + lenderName;
             
             $scope.pieConfig = {
-                title: title,
+                title: "Denial Reason : All Lenders",
                 tooltips: true,
                 labels: false,
                 mouseover: function () { },
@@ -423,7 +432,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 legend: {
                     display: true,
                     //could be 'left, right'
-                    position: 'right'
+                    position: 'left'
                 }
             };
 
