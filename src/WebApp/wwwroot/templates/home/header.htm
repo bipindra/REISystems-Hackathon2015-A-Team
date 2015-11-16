@@ -78,14 +78,18 @@
 The Rural Housing Service (RHS) lends both directly to low income borrowers in rural areas and guarantees loans that meet RHS requirements made by approved lenders."><div class="round-button-text">{{TotalFSA}}</div>FSA/RHA Lenders</button><br />
     </div>
 </div>
-<div  class="container">
-    <br/>
-    <br/>
-    The below table displays up to top 10 mortgage lenders that have supported or approved maximum loans for the selected loan type. 
-    <br/>
-    <br />
+<div  class="row"  >
+    <div class="text-center" ng-show="showTable">
+        <br />&nbsp;
+        <br />
+        <br />
+        The below table displays up to top 10 mortgage lenders that have supported or approved maximum loans for the selected loan type.
+        <br />
+        <br />
+
+    </div>
 </div>
-<div class="container" ng-show="showTable">
+<div class="row" ng-show="showTable">
     <table class="table table-hover" ng-show="LendersData && LendersData.length>0">
         <thead>
             <tr>
