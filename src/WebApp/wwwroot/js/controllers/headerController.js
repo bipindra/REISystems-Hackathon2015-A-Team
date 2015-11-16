@@ -318,7 +318,9 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
             chartData.series = ["Approved ", " Rejected "]
             chartData.data = alasql('SELECT top 20 * from ? ', [chartData.data]);
-
+            var data = chartData.data;
+            
+            chartData.data = data;
             def.resolve(chartData);
         }, function (error) {
             console.log(error);
@@ -506,7 +508,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                         //y.push(lendersData[i].count)
                         y.push(Math.round((lendersData[i].count * 100) / sumDenialReasons[0].Total));
 
-                        pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
+                        pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + " %)" });
                     }
                 }
             var title = lenderName;
