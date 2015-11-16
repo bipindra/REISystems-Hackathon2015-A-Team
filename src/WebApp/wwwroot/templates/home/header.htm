@@ -66,11 +66,11 @@
         <br />
     </div>
     <div class="col col-md-3 col-sm-6 col-xs-6">
-        <button  type="button" class="round-button btn btn-success" ng-click="PopulateLenderTable(1)" data-toggle="tooltip" title="In a FHA loan, borrowers pay for mortgage insurance due to which the lenders offers attractive interest rates with less stringent and more flexible qualification requirements."><div class="round-button-text">{{TotalFHA}}</div>FHA Lenders</button><br />
+        <button type="button" class="round-button btn btn-success" ng-click="PopulateLenderTable(1)" data-toggle="tooltip" title="In a FHA loan, borrowers pay for mortgage insurance due to which the lenders offers attractive interest rates with less stringent and more flexible qualification requirements."><div class="round-button-text">{{TotalFHA}}</div>FHA Lenders</button><br />
     </div>
 
     <div class="col col-md-3 col-sm-6 col-xs-6">
-        <button  type="button" class="round-button btn btn-success" ng-click="PopulateLenderTable(2)" data-toggle="tooltip" title="The VA direct home loan program supplies home financing to eligible veterans in areas where private financing is not generally available, to help veterans purchase properties with no down payment."><div class="round-button-text">{{TotalVA}}</div>VA Lenders</button><br />
+        <button type="button" class="round-button btn btn-success" ng-click="PopulateLenderTable(2)" data-toggle="tooltip" title="The VA direct home loan program supplies home financing to eligible veterans in areas where private financing is not generally available, to help veterans purchase properties with no down payment."><div class="round-button-text">{{TotalVA}}</div>VA Lenders</button><br />
     </div>
 
     <div class="col col-md-3 col-sm-6 col-xs-6">
@@ -90,43 +90,16 @@ The Rural Housing Service (RHS) lends both directly to low income borrowers in r
         <thead>
             <tr>
                 <th>Name</th>
-                <th>FHA</th>
+                <!--<th>FHA</th>
                 <th>VA</th>
-                <th>FSA</th>
+                <th>FSA</th>-->
                 <th>Address</th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="Lender in LendersData">
                 <td>{{Lender.Name}}</td>
-                <!--<td ng-show="All || FHA ">{{Lender.FHA}}</td>-->
-                <!--<td ng-show="All || VA ">{{Lender.VA}}</td>-->
-                <td>
-                    <label ng-if="All || FHA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(VA || FSA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
-                <td>
-                    <label ng-if="All || VA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(FHA || FSA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
-                <td>
-                    <label ng-if="All || FSA" class="checkbox-inline">
-                        <input type="checkbox" checked="checked" disabled>
-                    </label>
-                    <label ng-if="(FHA || VA) && !All" class="checkbox-inline">
-                        <input type="checkbox" disabled>
-                    </label>
-                </td>
                 <td>{{Lender.Address}}</td>
-                <!--<td><input type="checkbox" ng-click="LenderSelected(Lender);" /></td>-->
             </tr>
         </tbody>
     </table>
@@ -147,7 +120,7 @@ The Rural Housing Service (RHS) lends both directly to low income borrowers in r
     </div>
 </div>
 
-<div class="panel-body"  ng-if="showChart">
+<div class="panel-body" ng-if="showChart">
     <div class="container">
         <!--<div class="row-fluid">
             <div class="pull-left" ng-show="showLenderDropdown">
