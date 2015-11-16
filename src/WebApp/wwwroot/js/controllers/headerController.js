@@ -127,6 +127,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         
         var url = finalQuery;
         $rootScope.loading = true;
+        
         dataService.getData(url)
         .then(function (data) {
                 input.limit = data.total;
@@ -134,7 +135,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             
             dataService.getData(url).then(function (newData) {
                 $scope.allData = newData.results;
-                var x = alasql('SELECT respondent_id  from ? GROUP by respondent_id', [newData.results]);
+                var x = alasql('SELECT respondent_id  from ? where loan_type = 1 GROUP by respondent_id', [newData.results]);
                 var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
                 var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
                 var a = alasql('SELECT respondent_id  from ? where loan_type = 4  GROUP by respondent_id', [newData.results]);
@@ -233,26 +234,41 @@ app.controller('headerController', function headerController($rootScope, $scope,
         }
         var allData = alasql('select * from ? ' + where, [$scope.allData]);
         var ys = [];
+        var ysOrder = [];
         for (var x = 0; x < allData.length; x++) {
             var item = allData[x];
             if (!ys[item.respondent_id]) {
                 ys[item.respondent_id] = [];
             }
             ys[item.respondent_id]["action_taken_" + item.action_taken] = item.count;
-
+            ysOrder.push(item.respondent_id);
         }
         var final = [];
-        for (var x in ys) {
+        
+        for (var i = 0; i < ysOrder.length; i++) {
+            var x = ysOrder[i];
+            var item = ys[x];
+            var itemx = item[x];
+            var a1 = 0, a2 = 0;
+            if (item) {
+                a1 = item["action_taken_1"] || 0;
+                a2 = item["action_taken_2"] || 0;
+            }
             final.push({
-                respondent_id: x,
-                action_taken_1: ys[x]["action_taken_1"],
-                action_taken_2: ys[x]["action_taken_2"]
+                respondent_id:x ,
+                action_taken_1: a1,
+                action_taken_2: a2
             });
         }
 
+        final = final.sort(function (a, b) {
+            var amax = (a.action_taken_1);
+            var bmax = (b.action_taken_1);
+            return  bmax -amax;
+        });
+        
         var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1", "action_taken_2"] });
-        console.log(chartData);
-
+        
         $scope.config = {
             title: 'Approvals/Disapprovals',
             tooltips: true,
@@ -267,7 +283,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             }
         };
         chartData.series = ["Approved ", " Rejected "]
-        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
+        chartData.data = alasql('SELECT top 10 * from ? ', [chartData.data]);
         return chartData;
     }
 
@@ -275,7 +291,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     $scope.SearchClicked = SearchClickHandler;
 
     $scope.LenderSelected = function (selectedLender) {
-        console.log(selectedLender);
+       
         var input = {
             "select": [escape('COUNT()'), 'respondent_id', 'denial_reason_1'],
             "where": [
@@ -369,23 +385,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
                     pieChartData.data.push({ x: x, y: y, tooltip : x + "(" + y[0] + ")"  });
                 }
             }
-
-
-
-
-            //var pdata = {
-            //    data: [{
-            //        x: "Approved",
-            //        y: [50],
-            //        tooltip: "this is tooltip"
-            //    }, {
-            //        x: "Rejected",
-            //        y: [20]
-            //    }]
-            //};
-
-            //uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1"] });
-            console.log(pieChartData);
 
             $scope.pieConfig = {
                 title: 'Denial Reasons',
