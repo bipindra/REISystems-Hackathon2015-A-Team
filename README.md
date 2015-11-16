@@ -18,10 +18,10 @@ The application uses the Angular JS charts to generate the charts and graphs for
 
 ####Build Instructions
 
-PreRequisites
-1. Install npm
-2. Install git
-3. Install .Net framework open source 1.0.0-beta5 https://github.com/dotnet/roslyn 
+#####PreRequisites
+1. Install NPM
+2. Install Github
+3. Install the .Net framework open source 1.0.0-beta5. Refer https://github.com/dotnet/roslyn 
 
 #####Build Instructions:
 
