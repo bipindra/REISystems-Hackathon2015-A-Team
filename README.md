@@ -25,21 +25,34 @@ The application uses the Angular JS charts to generate the charts and graphs for
 
 #####Build Instructions:
 
-If building from command line 
-1. Clone source code from github git clone https://github.com/REI-Systems/REISystems-Hackathon2015-A-Team
-2. go to folder src/WebApp
-3. run command dnu build 
-4. npm install
-5. bower install
-6. dnx web or just run gulp
+######If building from command line 
+1. first clone the source code from Github using git clone https://github.com/REI-Systems/REISystems-Hackathon2015-A-Team
+2. Go to the folder src/WebApp
+3. Run command - dnu build 
+4. Run command - npm install
+5. Run command - bower install
+6. Run command - dnx web or GULP
 
-If opening from Visual Studio 2015
-Open ATeam.sln 
-Build the Solution
-Run the solution using F5 or Run Button
-
-
-
+######If opening from Visual Studio 2015
+1. Open ATeam.sln 
+2. Build the Solution
+3. Run the solution using F5 or Run Button
 
 ####Contact information 
+(1) Bipindra Shreshta
+    Phone:409-225-8714
+    Email: bshrestha@reisystems.com
+
+(2) Ateet Vora
+    Phone:571-229-2784
+    Email:avora@reisystems.com
+
+(3) Prasad Pai
+    Phone:201-920-1512
+    Email:prasad.pai@reisystems.com
+
+(4) Scott Keeler
+    Phone:scott.keeler@reisystems.com
+    Email:703-480-9203
+
 
