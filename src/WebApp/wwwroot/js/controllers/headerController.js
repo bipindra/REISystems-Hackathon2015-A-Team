@@ -88,18 +88,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var input = {
             "select": [escape('COUNT()'), 'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
             "where": [{
-                "key": "state_code",
-                "value": $scope.SelectedStateCode,
-                "operator": "="
-            }, {
-                "key": "county_code",
-                "value": $scope.SelectedCountyCode.toString().substr(2, 3),
-                "operator": "="
-            }, {
-                "key": "loan_purpose",
-                "value": $scope.SelectedLoanPurposeCode,
-                "operator": "="
-            }, {
                 "key": "action_taken",
                 "value": "(1,2)",
                 "operator": " in "
@@ -128,12 +116,12 @@ app.controller('headerController', function headerController($rootScope, $scope,
                     "operator": "="
                 });
         }
-        
-        if ($scope.SelectedCountyCode && $scope.SelectedCountyCode !== "" && $scope.SelectedCountyCode !== "0")
+        var tempcountyCode = $scope.SelectedCountyCode.toString().substr(2, 3);
+        if (tempcountyCode && tempcountyCode !== "" && tempcountyCode !== "0")
         {
             input.where.push({
                 "key": "county_code",
-                "value": $scope.SelectedCountyCode,
+                "value": tempcountyCode,
                 "operator": "="
             });
         }
