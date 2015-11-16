@@ -157,7 +157,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 window.data = newData;
                 $rootScope.loading = false;
                 $('[data-toggle="tooltip"]').tooltip({ template: "<div class='tooltip' ><div class='tooltip-inner' style='text-align:left; max-width:5000px'></div></div>", html: true });
-                //PopulateLenderTable(0);
                 
             });
         }, function (data) {
@@ -170,7 +169,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     function PopulateLenderTableClick(type) {
         
         //$scope.showTable = true;
-        $scope.All = type == 0 ? true : false;
+        $scope.All = type == 1 ? true : false;
         $scope.FHA = type == 2 ? true : false;
         $scope.VA = type == 3 ? true : false;
         $scope.FSA = type == 4 ? true : false;
@@ -232,7 +231,9 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
             $scope.SelectedLenderValue = $scope.LendersData[0].Name;
             $scope.showLenderDropdown = true;
-            $scope.LenderSelected($scope.LendersData[0].respondent_id, false);
+            if ($scope.LendersData[0] && $scope.LendersData[0].respondent_id != undefined) {
+                $scope.LenderSelected($scope.LendersData[0].respondent_id, false);
+            }
         }, function (error) {
             console.log(error);
         });
@@ -322,7 +323,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
         dataService.getData(url)
         .then(function (data) {
-            if (!data.result) {
+            if (!data.results) {
                 dataService.getData(url)
                     .then(function (data) {
 
@@ -365,23 +366,10 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 "select": respondentSelect,
             "where": [
                     respondentsWhere,
-                {
-                    "key": "state_code",
-                    "value": $scope.SelectedStateCode,
-                    "operator": "="
-                }, {
-                    "key": "county_code",
-                    "value": $scope.SelectedCountyCode.toString().substr(2, 3),
-                    "operator": "="
-                }, {
-                    "key": "loan_purpose",
-                    "value": $scope.SelectedLoanPurposeCode,
-                    "operator": "="
-                },
             {
                 "key": "loan_type",
-                "value": $scope.Loan_Type == 0 ? " (1,2,3,4) " : $scope.Loan_Type,
-                "operator": $scope.Loan_Type == 0 ? " IN " : "="
+                "value": $scope.Loan_Type,
+                "operator": "="
             },
             ],
             "orderBy": {
@@ -391,6 +379,30 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 "groupBy": respondentGroupBy,
             "limit": 100
         };
+
+        if ($scope.SelectedLoanPurposeCode && $scope.SelectedLoanPurposeCode !== "" && $scope.SelectedLoanPurposeCode !== "0") {
+            input.where.push({
+                "key": "loan_purpose",
+                "value": $scope.SelectedLoanPurposeCode,
+                "operator": "="
+            });
+        }
+
+        if ($scope.SelectedStateCode && $scope.SelectedStateCode !== "" && $scope.SelectedStateCode !== "00") {
+            input.where.push({
+                "key": "state_code",
+                "value": $scope.SelectedStateCode,
+                "operator": "="
+            });
+        }
+        var tempcountyCode = $scope.SelectedCountyCode.toString().substr(2, 3);
+        if (tempcountyCode && tempcountyCode !== "" && tempcountyCode !== "0") {
+            input.where.push({
+                "key": "county_code",
+                "value": tempcountyCode,
+                "operator": "="
+            });
+        }
 
 
         var t = function (q) {
@@ -430,10 +442,10 @@ app.controller('headerController', function headerController($rootScope, $scope,
                         pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
                 }
             }
-            var title = "Denial Reasons : " + lenderName;
+            var title =  lenderName;
 
             $scope.pieConfig = {
-                title: "Denial Reason : All Lenders",
+                title: "Denial Reasons : All Lenders",
                 tooltips: true,
                 labels: false,
                 mouseover: function () { },
