@@ -1,9 +1,6 @@
 # REISystems-Hackathon2015-A-Team
-A Team
 
-About this project:
-
-
+###About MortgageLender-Review.com
 
 ####Design Approach
 The HMDA datasets provided by Housing Mortgage Disclosour Act website provides web services to query and get JSON data. Our application is mostly clientn side and some open source version of asp.net. 
