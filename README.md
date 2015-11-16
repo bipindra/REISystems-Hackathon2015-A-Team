@@ -3,9 +3,9 @@
 ###About MortgageLender-Review.com
 
 ####Design Approach
-The HMDA datasets provided by Housing Mortgage Disclosour Act website provides web services to query and get JSON data. Our application is mostly clientn side and some open source version of asp.net. 
 
-
+The MortgageLender-Review.com application utlitizes the Consumer Financial Protection Bureau’s (CFPB) publicly available - Home Mortgage Disclosure Act (HMDA) data. The CFPB's Open Tech website provides the API to obtain the JSON source of the HMDA dataset.
+The MortgageLender.com application is mostly built as a Client side application utlizing web service to query the HMDA dataset. The application also uses the open source version of ASP.net. 
 
 ####Development Approach
 Our team used GitHub version control, Trello for Agile planning, Visual Studio online for continous integration and deployment, Azure for hosting, Jasmine and karma for javascript unit test, gulp for running tasks like build,clean,minification, start the web server. We used AngularJS on client side and ASP.Net to run the project in the server side. 
