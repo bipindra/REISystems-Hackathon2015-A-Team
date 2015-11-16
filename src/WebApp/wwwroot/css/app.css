@@ -311,3 +311,37 @@ textarea {
   margin-top: -50px;
   margin-left: -100px;
 }
+
+.round-button {
+	width:90%;
+    height:10%;
+}
+.round-button-circle {
+	width: 90%;
+	
+	padding-bottom: 100%;
+    border-radius: 50%;
+	border:10px solid #cfdcec;
+    overflow:hidden;
+    
+    background: #4679BD; 
+    box-shadow: 0 0 3px gray;
+}
+.round-button:hover {
+	background-color:#3276B1; border-color:#269ABC
+}
+.round-button:focus {
+	background-color:#21527d; border-color:#80b1ee
+}
+.round-button {
+    border-radius:90%; height:140px; width:140px; background-color:#3b70ab; border-width:5px; border-color:#91cddf; text-align:center; font-size:11px; 
+}
+.round-button-text{
+    border-width:5px; text-align:center; font-size:24px; color:white;
+}
+.round-button-text:hover {
+	border-color:#269ABC
+}
+.round-button-text:focus {
+	background-color:#21527d; border-color:#80b1ee
+}
