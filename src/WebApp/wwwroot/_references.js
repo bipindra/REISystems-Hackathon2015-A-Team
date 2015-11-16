@@ -1,6 +1,7 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="../gulpfile.js" />
 /// <reference path="../karma.conf.js" />
+/// <reference path="js/app.config.js" />
 /// <reference path="js/app.js" />
 /// <reference path="js/controllers/headercontroller.js" />
 /// <reference path="js/controllers/homecontroller.js" />
