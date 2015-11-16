@@ -120,7 +120,7 @@
                     </label>
                 </td>
                 <td>{{Lender.Address}}</td>
-                <td><input type="checkbox" ng-click="LenderSelected(Lender);" /></td>
+                <!--<td><input type="checkbox" ng-click="LenderSelected(Lender);" /></td>-->
             </tr>
         </tbody>
     </table>
@@ -133,15 +133,49 @@
 
 <div class="panel-body">
     <div class="container">
-        <div class="row-fluid">
-            <div class="col col-md-6 col-sm-6 col-xs-6">
-                <div data-ac-chart="'pie'" data-ac-data="pieChartDataAll" data-ac-config="pieConfig" class="chart"></div>
+        <!--<div class="row-fluid">
+            <div class="pull-left" ng-show="showLenderDropdown">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width:auto;">
+                        {{SelectedLenderValue}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pre-scrollable">
+                        <li ng-repeat="Lender in LendersData"><a ng-click="LenderSelected(Lender)">{{Lender.Name}}</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="col col-md-6 col-sm-6 col-xs-6">
-                <div data-ac-chart="'pie'" data-ac-data="pieChartData" data-ac-config="pieConfig1" class="chart"></div>
+        </div>-->
+        <div class="row">
+            <div>
+                <h3><span>The Pie chart displays the reasons of denial of a loan by a institution.</span></h3>
             </div>
         </div>
-    </div>
-</div>
+        <div class="row">
+            <div class="col-md-6">
+                <div data-ac-chart="'pie'" data-ac-data="pieChartData" data-ac-config="pieConfig1" class="chart"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="dropdown pull-right">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" style="width:auto;">
+                        {{SelectedLenderValue}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu pre-scrollable">
+                        <li ng-repeat="Lender in LendersData"><a ng-click="LenderSelected(Lender)">{{Lender.Name}}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <h3><span>The Pie chart displays the reasons of denial of a loan by a institution.</span></h3>
+            </div>
+        </div>
 
+        <div class="row">
+            <div data-ac-chart="'pie'" data-ac-data="pieChartDataAll" data-ac-config="pieConfig" class="chart"></div>
+
+        </div>
+    </div>
 
