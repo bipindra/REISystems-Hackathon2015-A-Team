@@ -1,4 +1,6 @@
 ﻿'use strict'
+
+
 app.controller('headerController', function headerController($rootScope, $scope, lookupService, queryService, dataService, configService, uiDataGeneratorService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
@@ -147,6 +149,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 $scope.data = newData;
                 window.data = newData;
                 $rootScope.loading = false;
+                $('[data-toggle="tooltip"]').tooltip();
                 //PopulateLenderTable(0);
                 
             });

@@ -28,6 +28,10 @@ var app = angular.module('myApp', ['ui.router', 'angularCharts'])
         url: '/team',
         templateUrl: 'templates/home/team.htm'
 
+    }).state('guide', {
+        url: '/Guide',
+        templateUrl: 'templates/home/guide.htm'
+
     });
 
 
