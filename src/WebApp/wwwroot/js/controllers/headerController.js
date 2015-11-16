@@ -280,7 +280,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             }
         };
         chartData.series = ["Approved ", " Rejected "]
-        chartData.data = alasql('SELECT top 10 * from ? ', [chartData.data]);
+        chartData.data = alasql('SELECT top 20 * from ? ', [chartData.data]);
         return chartData;
     }
 
