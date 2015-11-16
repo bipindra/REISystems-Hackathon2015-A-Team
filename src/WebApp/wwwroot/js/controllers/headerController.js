@@ -12,19 +12,16 @@ app.controller('headerController', function headerController($rootScope, $scope,
     $scope.SelectedCountyValue = 'Select County';
 
     GetLookups()
-
    
     function GetLookups() {
 
         //$scope.showChart = false;
-
         lookupService.getLookup('fips').then(function (data) {
             var results = angular.fromJson(data).table.data;
             $scope.lookupData = [];
             for (var i in results) {
                 $scope.lookupData.push({ Code: results[i]._id, Value: results[i].county_name })
             }
-
         });
 
         lookupService.getLookup('state_code').then(function (data) {
@@ -53,8 +50,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
             }
             $scope.lookupDenialReason = newData;
         });
-
-
     }
 
     $scope.LoanPurposeSelected = function (LoanPurposeCode, LoanPurposeValue) {
@@ -63,12 +58,9 @@ app.controller('headerController', function headerController($rootScope, $scope,
     }
 
     $scope.StateSelected = function (StateCode, StateValue) {
-
-
         if (StateCode < 10) {
             StateCode = '0' + StateCode;
         }
-
         $scope.SelectedStateCode = StateCode;
         $scope.SelectedStateValue = StateValue;
         $scope.SelectedCountyCode = 0;
@@ -80,33 +72,20 @@ app.controller('headerController', function headerController($rootScope, $scope,
             { counties.push($scope.lookupData[index]) }
             $scope.lookupCounty = counties;
         }
-
     }
 
     $scope.CountySelected = function (CountyCode, CountyValue) {
         $scope.SelectedCountyCode = CountyCode;
         $scope.SelectedCountyValue = CountyValue;
     }
-
     
     function SearchClickHandler() {
         $scope.showButtons = true;
         $scope.showTable = false;
         var input={
             "select": [escape('COUNT()'),'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
-            "where": [{
-                "key": "state_code",
-                "value": $scope.SelectedStateCode,
-                "operator": "="
-            }, {
-                "key": "county_code",
-                "value": $scope.SelectedCountyCode.toString().substr(2, 3),
-                "operator": "="
-            }, {
-                "key": "loan_purpose",
-                "value": $scope.SelectedLoanPurposeCode,
-                "operator": "="
-            }, {
+            "where": [
+            {
                 "key": "action_taken",
                 "value": "(1,2)",
                 "operator": " in "
@@ -118,6 +97,33 @@ app.controller('headerController', function headerController($rootScope, $scope,
             "groupBy": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
             "limit":100
         };
+
+        if ($scope.SelectedLoanPurposeCode &&  $scope.SelectedLoanPurposeCode !== "" && $scope.SelectedLoanPurposeCode !== "0") {
+            input.where.push({
+                "key": "loan_purpose",
+                "value": $scope.SelectedLoanPurposeCode,
+                "operator": "="
+            });
+        }
+        
+        if ($scope.SelectedStateCode && $scope.SelectedStateCode !== "" && $scope.SelectedStateCode !== "00")
+        {
+            input.where.push({
+                    "key": "state_code",
+                    "value": $scope.SelectedStateCode,
+                    "operator": "="
+                });
+        }
+        
+        if ($scope.SelectedCountyCode && $scope.SelectedCountyCode !== "" && $scope.SelectedCountyCode !== "0")
+        {
+            input.where.push({
+                "key": "county_code",
+                "value": $scope.SelectedCountyCode,
+                "operator": "="
+            });
+        }
+
         var t = function (q) {
             var query = queryService.getQueryString(q);
             return configService.getConfig('larUrl') + '?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
@@ -157,7 +163,6 @@ app.controller('headerController', function headerController($rootScope, $scope,
      }
 
     function PopulateLenderTableClick(type) {
-        
 
         //$scope.showTable = true;
         $scope.All = type == 0 ? true : false;
