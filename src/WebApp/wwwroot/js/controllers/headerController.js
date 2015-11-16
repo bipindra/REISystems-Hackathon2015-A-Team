@@ -92,6 +92,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
     
     function SearchClickHandler() {
+        $scope.showLenderDropdown = false;
         $scope.showButtons = true;
         $scope.showTable = false;
         var input = {
@@ -130,6 +131,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var url = finalQuery;
         $rootScope.loading = true;
         
+        console.log(url);
         dataService.getData(url)
         .then(function (data) {
                 input.limit = data.total;
@@ -183,7 +185,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         
 
         //for chart
-        $scope.Loan_Type = type
+        $scope.Loan_Type = type;
         $scope.chartData = ShowChart($scope.allData, type);;
         
         //end chart 
@@ -193,6 +195,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
             list.push("'" + data[i].Name + "'");
         }
 
+        $scope.pieConfig1 = {};
+        $scope.pieChartDataAll = {};
         $scope.LenderSelected(list.join(','), true);
 
         var query = queryService.getQueryString({
@@ -221,16 +225,13 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 newData[x]["VA"] = $scope.VA;
             }
             $scope.LendersData = newData;
+
+            $scope.SelectedLenderValue = $scope.LendersData[0].Name;
+            $scope.showLenderDropdown = true;
+            $scope.LenderSelected($scope.LendersData[0].respondent_id, false);
         }, function (error) {
             console.log(error);
         });
-
-        
-        //$scope.LendersData = [
-        //    { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
-        //    { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
-        //    { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
-        //];
     }
 
     function ShowChart(allData, type) {
@@ -290,7 +291,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             }
         };
         chartData.series = ["Approved ", " Rejected "]
-        chartData.data = alasql('SELECT top 10 * from ? ', [chartData.data]);
+        chartData.data = alasql('SELECT top 20 * from ? ', [chartData.data]);
         return chartData;
     }
 
@@ -298,7 +299,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     $scope.SearchClicked = SearchClickHandler;
 
     $scope.LenderSelected = function (selectedLender, allLenders) {
-        console.log(selectedLender);
+
 
         $rootScope.loading = true;
 
@@ -306,11 +307,13 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var lenderName = "";
         if (selectedLender.respondent_id == undefined) {
             url = GetPieChartQuery(selectedLender)
-            lenderName = "All Lenders";
+            lenderName = "Denial Reason : All Lenders";
         }
         else {
             url = GetPieChartQuery(selectedLender.respondent_id)
             lenderName = selectedLender.Name;
+            $scope.SelectedLenderValue = lenderName;
+            $scope.showLenderDropdown = true;
         }
 
         dataService.getData(url)
@@ -421,29 +424,10 @@ app.controller('headerController', function headerController($rootScope, $scope,
                         pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
                 }
             }
-
-
-
-
-
-            //var pdata = {
-            //    data: [{
-            //        x: "Approved",
-            //        y: [50],
-            //        tooltip: "this is tooltip"
-            //    }, {
-            //        x: "Rejected",
-            //        y: [20]
-            //    }]
-            //};
-
-            //uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1"] });
-            console.log(pieChartData);
-            
             var title = "Denial Reasons : " + lenderName;
             
             $scope.pieConfig = {
-                title: title,
+                title: "Denial Reason : All Lenders",
                 tooltips: true,
                 labels: false,
                 mouseover: function () { },
@@ -452,7 +436,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 legend: {
                     display: true,
                     //could be 'left, right'
-                    position: 'right'
+                    position: 'left'
                 }
             };
 
