@@ -2,22 +2,21 @@
 
 
 app.controller('headerController', function headerController($rootScope, $scope, lookupService, queryService, dataService, configService, uiDataGeneratorService) {
-
+    
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
     $scope.SelectedLoanPurposeCode = 0
 
-    $scope.showChart = true;
     $scope.SelectedStateCode = 0;
     $scope.SelectedStateValue = 'Select State';
 
     $scope.SelectedCountyCode = 0;
     $scope.SelectedCountyValue = 'Select County';
-
+    
     GetLookups()
 
     function GetLookups() {
 
-        //$scope.showChart = false;
+        $scope.showChart = false;
         lookupService.getLookup('fips').then(function (data) {
             var results = angular.fromJson(data).table.data;
             $scope.lookupData = [];
@@ -82,6 +81,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     }
 
     function SearchClickHandler() {
+        $scope.showChart = false;
         $scope.showLenderDropdown = false;
         $scope.showButtons = true;
         $scope.showTable = false;
