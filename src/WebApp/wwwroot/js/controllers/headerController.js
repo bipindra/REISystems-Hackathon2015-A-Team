@@ -1,4 +1,6 @@
 ﻿'use strict'
+
+
 app.controller('headerController', function headerController($rootScope, $scope, lookupService, queryService, dataService, configService, uiDataGeneratorService) {
 
     $scope.SelectedLoanPurposeValue = 'Select Loan Purpose';
@@ -12,7 +14,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
     $scope.SelectedCountyValue = 'Select County';
 
     GetLookups()
-   
+
     function GetLookups() {
 
         //$scope.showChart = false;
@@ -78,14 +80,26 @@ app.controller('headerController', function headerController($rootScope, $scope,
         $scope.SelectedCountyCode = CountyCode;
         $scope.SelectedCountyValue = CountyValue;
     }
-    
+
     function SearchClickHandler() {
+        $scope.showLenderDropdown = false;
         $scope.showButtons = true;
         $scope.showTable = false;
-        var input={
-            "select": [escape('COUNT()'),'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
-            "where": [
-            {
+        var input = {
+            "select": [escape('COUNT()'), 'loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
+            "where": [{
+                "key": "state_code",
+                "value": $scope.SelectedStateCode,
+                "operator": "="
+            }, {
+                "key": "county_code",
+                "value": $scope.SelectedCountyCode.toString().substr(2, 3),
+                "operator": "="
+            }, {
+                "key": "loan_purpose",
+                "value": $scope.SelectedLoanPurposeCode,
+                "operator": "="
+            }, {
                 "key": "action_taken",
                 "value": "(1,2)",
                 "operator": " in "
@@ -95,7 +109,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 "suffix": "DESC"
             },
             "groupBy": ['loan_type', 'loan_type_name', 'action_taken', 'respondent_id'],
-            "limit":100
+            "limit": 100
         };
 
         if ($scope.SelectedLoanPurposeCode &&  $scope.SelectedLoanPurposeCode !== "" && $scope.SelectedLoanPurposeCode !== "0") {
@@ -126,13 +140,15 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
         var t = function (q) {
             var query = queryService.getQueryString(q);
-            return configService.getConfig('larUrl') + '?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+            return configService.getConfig('larUrl') + '?' + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
         }
         input.limit = 1;
         var finalQuery = t(input);
         
         var url = finalQuery;
         $rootScope.loading = true;
+        
+        console.log(url);
         dataService.getData(url)
         .then(function (data) {
                 input.limit = data.total;
@@ -140,7 +156,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
             
             dataService.getData(url).then(function (newData) {
                 $scope.allData = newData.results;
-                var x = alasql('SELECT respondent_id  from ? GROUP by respondent_id', [newData.results]);
+                var x = alasql('SELECT respondent_id  from ? where loan_type = 1 GROUP by respondent_id', [newData.results]);
                 var y = alasql('SELECT respondent_id  from ? where loan_type = 2  GROUP by respondent_id', [newData.results]);
                 var z = alasql('SELECT respondent_id  from ? where loan_type = 3  GROUP by respondent_id', [newData.results]);
                 var a = alasql('SELECT respondent_id  from ? where loan_type = 4  GROUP by respondent_id', [newData.results]);
@@ -152,6 +168,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 $scope.data = newData;
                 window.data = newData;
                 $rootScope.loading = false;
+                $('[data-toggle="tooltip"]').tooltip();
                 //PopulateLenderTable(0);
                 
             });
@@ -163,7 +180,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
      }
 
     function PopulateLenderTableClick(type) {
-
+        
         //$scope.showTable = true;
         $scope.All = type == 0 ? true : false;
         $scope.FHA = type == 2 ? true : false;
@@ -174,7 +191,7 @@ app.controller('headerController', function headerController($rootScope, $scope,
         if (type != 0) {
             where = "and loan_type=" + type;
         }
-        var data = alasql('SELECT top 10 respondent_id as Name, respondent_id as Address  from ? WHERE action_taken in (2,1) '+where+' GROUP by respondent_id ', [$scope.data.results]);
+        var data = alasql('SELECT top 10 respondent_id as Name, respondent_id as Address  from ? WHERE action_taken in (2,1) ' + where + ' GROUP by respondent_id ', [$scope.data.results]);
 
         for (var x in data) {
             data[x]["FHA"] = $scope.FHA;
@@ -184,33 +201,38 @@ app.controller('headerController', function headerController($rootScope, $scope,
         
 
         //for chart
-        $scope.Loan_Type = type
+        $scope.Loan_Type = type;
         $scope.chartData = ShowChart($scope.allData, type);;
         
         //end chart 
         var list = [];
         
         for (var i = 0; i < data.length; i++) {
-            list.push("'"+data[i].Name+"'");
+            list.push("'" + data[i].Name + "'");
         }
+
+        $scope.pieConfig1 = {};
+        $scope.pieChartDataAll = {};
+        $scope.LenderSelected(list.join(','), true);
+
         var query = queryService.getQueryString({
-            "select": ['respondent_id', 'respondent_name', 'respondent_address',escape('COUNT()')],
+            "select": ['respondent_id', 'respondent_name', 'respondent_address', escape('COUNT()')],
             "where": [{
                 "key": "respondent_id",
-                "value": "("+list.join(',')+")",
+                "value": "(" + list.join(',') + ")",
                 "operator": " IN"
             }],
             "orderBy": {
                 "columns": ['count'],
                 "suffix": "DESC"
             },
-            "groupBy": ['respondent_id','respondent_name','respondent_address'],
-            limit:data.length
+            "groupBy": ['respondent_id', 'respondent_name', 'respondent_address'],
+            limit: data.length
         });
 
-        $scope.showTable = data.length>0;
+        $scope.showTable = data.length > 0;
    
-        var finalQuery = configService.getConfig('institutionsUrl') +'?'+ query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
+        var finalQuery = configService.getConfig('institutionsUrl') + '?' + query.toString().replace(/\$/g, escape('$')).replace(/ /g, '+') + "&%24offset=0&%24format=json";
         dataService.getData(finalQuery).then(function (res) {
        
             var newData = alasql("select respondent_id, respondent_name as Name,respondent_address as Address from ? Group by respondent_id,respondent_name,respondent_address", [res.results]);
@@ -219,15 +241,13 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 newData[x]["VA"] = $scope.VA;
             }
             $scope.LendersData = newData;
-        }, function (error) {
-            console.log(error);});
 
-        
-        //$scope.LendersData = [
-        //    { Name: 'Test', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test address." },
-        //    { Name: 'Test1', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test1 address." },
-        //    { Name: 'Test2', FHA: $scope.FHA, VA: $scope.VA, Address: "This is test2 address." }
-        //];
+            $scope.SelectedLenderValue = $scope.LendersData[0].Name;
+            $scope.showLenderDropdown = true;
+            $scope.LenderSelected($scope.LendersData[0].respondent_id, false);
+        }, function (error) {
+            console.log(error);
+        });
     }
 
     function ShowChart(allData, type) {
@@ -238,25 +258,40 @@ app.controller('headerController', function headerController($rootScope, $scope,
         }
         var allData = alasql('select * from ? ' + where, [$scope.allData]);
         var ys = [];
+        var ysOrder = [];
         for (var x = 0; x < allData.length; x++) {
             var item = allData[x];
             if (!ys[item.respondent_id]) {
                 ys[item.respondent_id] = [];
             }
             ys[item.respondent_id]["action_taken_" + item.action_taken] = item.count;
-
+            ysOrder.push(item.respondent_id);
         }
         var final = [];
-        for (var x in ys) {
+
+        for (var i = 0; i < ysOrder.length; i++) {
+            var x = ysOrder[i];
+            var item = ys[x];
+            var itemx = item[x];
+            var a1 = 0, a2 = 0;
+            if (item) {
+                a1 = item["action_taken_1"] || 0;
+                a2 = item["action_taken_2"] || 0;
+        }
             final.push({
-                respondent_id: x,
-                action_taken_1: ys[x]["action_taken_1"],
-                action_taken_2: ys[x]["action_taken_2"]
+                respondent_id:x ,
+                action_taken_1: a1,
+                action_taken_2: a2
             });
         }
 
+        final = final.sort(function (a, b) {
+            var amax = (a.action_taken_1);
+            var bmax = (b.action_taken_1);
+            return  bmax -amax;
+        });
+        
         var chartData = uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1", "action_taken_2"] });
-        console.log(chartData);
 
         $scope.config = {
             title: 'Approvals/Disapprovals',
@@ -272,23 +307,76 @@ app.controller('headerController', function headerController($rootScope, $scope,
             }
         };
         chartData.series = ["Approved ", " Rejected "]
-        chartData.data = alasql('SELECT top 5 * from ? ', [chartData.data]);
+        chartData.data = alasql('SELECT top 20 * from ? ', [chartData.data]);
         return chartData;
     }
 
     $scope.PopulateLenderTable = PopulateLenderTableClick;
     $scope.SearchClicked = SearchClickHandler;
 
-    $scope.LenderSelected = function (selectedLender) {
-        console.log(selectedLender);
-        var input = {
-            "select": [escape('COUNT()'), 'respondent_id', 'denial_reason_1'],
-            "where": [
-                {
+    $scope.LenderSelected = function (selectedLender, allLenders) {
+
+
+        $rootScope.loading = true;
+
+        var url = "";
+        var lenderName = "";
+        if (selectedLender.respondent_id == undefined) {
+            url = GetPieChartQuery(selectedLender)
+            lenderName = "Denial Reason : All Lenders";
+        }
+        else {
+            url = GetPieChartQuery(selectedLender.respondent_id)
+            lenderName = selectedLender.Name;
+            $scope.SelectedLenderValue = lenderName;
+            $scope.showLenderDropdown = true;
+        }
+
+        dataService.getData(url)
+        .then(function (data) {
+            if (!data.result) {
+                dataService.getData(url)
+                    .then(function (data) {
+
+                        CreatePieChart(lenderName,data.results, allLenders);
+                    }, function (data) {
+                        $rootScope.loading = false;
+                    });
+            } else {
+                CreatePieChart(lenderName,data.results,allLenders);
+            }
+        }, function (data) {
+            $rootScope.loading = false;
+        });
+
+        function GetPieChartQuery(respondents) {
+
+
+            var respondentSelect = [escape('COUNT()'), 'respondent_id', 'denial_reason_1'];
+            var respondentsWhere = {
+                "key": "respondent_id",
+                "value": "'" + respondents + "'",
+                "operator": "="
+            };
+            var respondentGroupBy = ['respondent_id', 'denial_reason_1'];
+
+
+            if (respondents.indexOf(",") > 0) {
+                respondentsWhere = {
                     "key": "respondent_id",
-                    "value": "'" + selectedLender.respondent_id + "'",
-                    "operator": "="
-                },
+                    "value": " (" + respondents + ") ",
+                    "operator": " IN "
+                }
+                respondentSelect = [escape('COUNT()'), 'denial_reason_1'];
+                respondentGroupBy = ['denial_reason_1'];
+            }
+
+
+
+        var input = {
+                "select": respondentSelect,
+            "where": [
+                    respondentsWhere,
                 {
                     "key": "state_code",
                     "value": $scope.SelectedStateCode,
@@ -307,17 +395,12 @@ app.controller('headerController', function headerController($rootScope, $scope,
                 "value": $scope.Loan_Type == 0 ? " (1,2,3,4) " : $scope.Loan_Type,
                 "operator": $scope.Loan_Type == 0 ? " IN " : "="
             },
-            //{
-            //    "key": "action_taken",
-            //    "value": "(1,2)",
-            //    "operator": " in "
-            //}
             ],
             "orderBy": {
                 "columns": ['count'],
                 "suffix": "DESC"
             },
-            "groupBy": ['respondent_id', 'denial_reason_1'],
+                "groupBy": respondentGroupBy,
             "limit": 100
         };
 
@@ -330,70 +413,53 @@ app.controller('headerController', function headerController($rootScope, $scope,
         var finalQuery = t(input);
 
         var url = finalQuery;
-        $rootScope.loading = true;
 
-
-        dataService.getData(url)
-        .then(function (data) {
-            if (!data.result) {
-                dataService.getData(url)
-                    .then(function (data) {
-
-                        handleCode(data.results);
-                    }, function (data) {
-                        $rootScope.loading = false;
-                    });
-            } else {
-                handleCode(data.results);
+            return finalQuery;
             }
-        }, function (data) {
-            $rootScope.loading = false;
-        });
 
-        function handleCode(lendersData) {
+        function CreatePieChart(lenderName,lendersData, allLenders) {
             //var lendersData = data.results;
 
             //var result = [];
 
             var pieChartData = { data: [] };
-            if(lendersData)
+            if (lendersData)
             for (var i = 0; i < lendersData.length; i++) {
                 if (lendersData[i].denial_reason_1) {
-
                     var x = "Not Specified";
-
                     var lookupValue = alasql('SELECT Value from ? where Code = ' + lendersData[i].denial_reason_1, [$scope.lookupDenialReason]);//lendersData[i].respondent_id;
 
                     if (lookupValue && lookupValue.length > 0) {
                         x = lookupValue[0].Value;
                     }
 
+
                     var y = [];
                     y.push(lendersData[i].count);
 
-                    pieChartData.data.push({ x: x, y: y, tooltip : x + "(" + y[0] + ")"  });
+                        pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
                 }
             }
-
-
-
-
-            //var pdata = {
-            //    data: [{
-            //        x: "Approved",
-            //        y: [50],
-            //        tooltip: "this is tooltip"
-            //    }, {
-            //        x: "Rejected",
-            //        y: [20]
-            //    }]
-            //};
-
-            //uiDataGeneratorService.createChartData(final, { x_field: "respondent_id", y_fields: ["action_taken_1"] });
-            console.log(pieChartData);
+            var title = "Denial Reasons : " + lenderName;
 
             $scope.pieConfig = {
-                title: 'Denial Reasons',
+                title: "Denial Reason : All Lenders",
+                tooltips: true,
+                labels: false,
+                mouseover: function () { },
+                mouseout: function () { },
+                click: function () { },
+                legend: {
+                    display: true,
+                    //could be 'left, right'
+                    position: 'left'
+                }
+            };
+
+            if (!allLenders)
+            {
+                $scope.pieConfig1 = {
+                    title: title,
                 tooltips: true,
                 labels: false,
                 mouseover: function () { },
@@ -405,9 +471,16 @@ app.controller('headerController', function headerController($rootScope, $scope,
                     position: 'right'
                 }
             };
+}
 
             pieChartData.data = alasql('SELECT * from ? ', [pieChartData.data]);
+
+            if (!allLenders) {
             $scope.pieChartData = pieChartData;
+            }
+            else {
+                $scope.pieChartDataAll = pieChartData;
+            }
 
 
 
