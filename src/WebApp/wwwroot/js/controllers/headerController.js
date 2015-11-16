@@ -411,7 +411,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
             //var result = [];
 
             var pieChartData = { data: [] };
-            if (lendersData)
+            var sumDenialReasons = alasql('SELECT SUM([count]) as Total from ? where denial_reason_1 > 0', [lendersData])
+           if (lendersData)
             for (var i = 0; i < lendersData.length; i++) {
                 if (lendersData[i].denial_reason_1) {
                     var x = "Not Specified";
@@ -423,7 +424,8 @@ app.controller('headerController', function headerController($rootScope, $scope,
 
 
                     var y = [];
-                    y.push(lendersData[i].count);
+                    //y.push(lendersData[i].count)
+                    y.push(Math.round((lendersData[i].count * 100 )/ sumDenialReasons[0].Total));
 
                         pieChartData.data.push({ x: x, y: y, tooltip: x + "(" + y[0] + ")" });
                 }
